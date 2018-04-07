@@ -38,6 +38,10 @@ public class SqlLogik {
     private String currentUser;
     private boolean isFertig;
 
+
+    private String databaseUrl = "jdbc:mysql://localhost:3306/SimpleLearner?useSSL=false";
+
+
     public Properties getUserInfo() {
         return userInfo;
     }
@@ -91,9 +95,13 @@ public class SqlLogik {
     }
 
     public SqlLogik() {
+
+        String dbUserName = "root";
+        String dbPassword = "test";
+
         userInfo = new Properties();
-        userInfo.put("user", "root"); //Username der MySql-Datenbank
-        userInfo.put("password", "databasemarcel"); //Passwort der MySql-Datenbank
+        userInfo.put("user", dbUserName); //Username der MySql-Datenbank
+        userInfo.put("password", dbPassword); //Passwort der MySql-Datenbank
         faecher = new ArrayList<>();
         kategorien = new ArrayList<>();
         aufgabenbloecke = new ArrayList<>();
@@ -119,7 +127,7 @@ public class SqlLogik {
         ResultSet rsSuche = null;
         boolean confirm = true;
 
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtStart = myConn.prepareStatement(startString);
                 Statement stmtSuche = myConn.createStatement()) {
 
@@ -171,7 +179,7 @@ public class SqlLogik {
 
         boolean check = false;
 
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement setAntwort = myConn.prepareStatement(antwortString);
                 PreparedStatement stmtAntwort = myConn.prepareStatement(stmtString)) {
 
@@ -215,7 +223,7 @@ public class SqlLogik {
 
         String stringCheck = "select * from lehrer, schueler";
         boolean[] checkPassword = new boolean[2];
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 Statement stmtCheck = myConn.createStatement();
                 ResultSet rsCheck = stmtCheck.executeQuery(stringCheck)) {
 
@@ -248,7 +256,7 @@ public class SqlLogik {
      * @throws SQLException
      */
     public void loadFaecher() throws SQLException {
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 Statement stmtFach = myConn.createStatement();
                 ResultSet rsFach = stmtFach.executeQuery("select fid from fach;")) {
 
@@ -275,7 +283,7 @@ public class SqlLogik {
     public void loadFaecher(String lehrer) throws SQLException {
         String faecherString = "select fach from lehrerunterrichtet where lehrer = ?";
         ResultSet rsFach = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
 
             stmtFach.setString(1, lehrer);
@@ -307,7 +315,7 @@ public class SqlLogik {
     public void loadFilteredFaecher(String filter) throws SQLException {
         String faecherString = "select fid from fach where fid like ?";
         ResultSet rsFach = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
 
             stmtFach.setString(1, "%" + filter + "%");
@@ -340,7 +348,7 @@ public class SqlLogik {
     public void loadFilteredFaecher(String lehrer, String filter) throws SQLException {
         String faecherString = "select fach from lehrerunterrichtet where lehrer = ? and fach like ?;";
         ResultSet rsFach = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
 
             stmtFach.setString(1, lehrer);
@@ -373,7 +381,7 @@ public class SqlLogik {
     public void loadKategorien(String fach) throws SQLException {
         String kategorieString = "select kid from kategorie where fach = ?";
         ResultSet rsFach = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
 
             stmtFach.setString(1, fach);
@@ -407,7 +415,7 @@ public class SqlLogik {
     public void loadFilteredKategorien(String fach, String filter) throws SQLException {
         String kategorieString = "select kid from kategorie where fach = ? and kid like ?";
         ResultSet rsFach = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
 
             stmtFach.setString(1, fach);
@@ -441,7 +449,7 @@ public class SqlLogik {
     public void loadBloeckeLehrer(String kategorie, String lehrer) throws SQLException {
         String blockString = "select bid from block where kategorie = ? and lehrer = ?;";
         ResultSet rsBlock = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
 
             stmtBlock.setString(1, kategorie);
@@ -478,7 +486,7 @@ public class SqlLogik {
 
         ResultSet rsBlock = null;
         ResultSet rsBlockTwo = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
                 PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
 
@@ -538,7 +546,7 @@ public class SqlLogik {
     public void loadFilteredBloeckeLehrer(String kategorie, String lehrer, String filter) throws SQLException {
         String blockString = "select bid from block where kategorie = ? and lehrer = ? and bid like ?;";
         ResultSet rsBlock = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
 
             stmtBlock.setString(1, kategorie);
@@ -577,7 +585,7 @@ public class SqlLogik {
 
         ResultSet rsBlock = null;
         ResultSet rsBlockTwo = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
                 PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
 
@@ -642,7 +650,7 @@ public class SqlLogik {
     public void loadFragen(String block) throws SQLException {
         String stringFrage = "select frage from aufgabe join block on aufgabe.block = block.bid where block.bid = ?";
         ResultSet rsFrage = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtFrage = myConn.prepareStatement(stringFrage)) {
 
             stmtFrage.setString(1, block);
@@ -677,7 +685,7 @@ public class SqlLogik {
         String stringAntworten = "select antworttext from antwort join aufgabe on antwort.aufgabe = aufgabe.aid "
                 + "join block on aufgabe.block = block.bid where block.bid = ? and aufgabe.frage = ?";
         ResultSet rsAntworten = null;
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtAntworten = myConn.prepareStatement(stringAntworten)) {
 
             stmtAntworten.setString(1, block);
@@ -709,7 +717,7 @@ public class SqlLogik {
      */
     public void deleteBlock(String blockname, String lehrer, String kategorie) throws SQLException {
         String loeschenString = "delete from block where bid = ? and lehrer = ? and kategorie = ?;";
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtLoeschen = myConn.prepareStatement(loeschenString)) {
 
             stmtLoeschen.setString(1, blockname);
@@ -734,7 +742,7 @@ public class SqlLogik {
      */
     public void createBlock(String block, String lehrer, String kategorie) throws SQLException {
         String createString = "insert into block(bid, lehrer, kategorie) values(?, ?, ?);";
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtUpdate = myConn.prepareStatement(createString)) {
 
             stmtUpdate.setString(1, block);
@@ -756,7 +764,7 @@ public class SqlLogik {
      */
     public void createKategorie(String katName, String fachName) throws SQLException {
         String createString = "insert into kategorie(kid, fach) values(?,?);";
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtUpdate = myConn.prepareStatement(createString)) {
 
             stmtUpdate.setString(1, katName);
@@ -788,7 +796,7 @@ public class SqlLogik {
         String insertAntwort = "insert into antwort(antworttext, istrue, aufgabe) values(?, ?, (select aufgabe.aid from aufgabe where "
                 + "aufgabe.block = ? and aufgabe.frage = ?));";
 
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtNewAntwort = myConn.prepareStatement(insertAntwort)) {
 
             stmtNewAntwort.setString(1, antworttext);
@@ -812,7 +820,7 @@ public class SqlLogik {
      */
     public void updateQuiz(String blockAlt, String lehrer, String blockNeu) throws SQLException {
         String updateString = "update block set block.bid = ? where block.bid = ? and block.lehrer = ?;";
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtNewName = myConn.prepareStatement(updateString)) {
             stmtNewName.setString(1, blockNeu);
             stmtNewName.setString(2, blockAlt);
@@ -840,7 +848,7 @@ public class SqlLogik {
         } else {
             updateString = "insert into aufgabe(block, frage) values(?, ?);";
         }
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
                 PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
                 PreparedStatement stmtNewQuestion = myConn.prepareStatement(updateString)) {
@@ -879,7 +887,7 @@ public class SqlLogik {
         String deleteString = "delete from antwort where antwort.aufgabe = (select aufgabe.aid from aufgabe where aufgabe.frage = ? "
                 + "and aufgabe.block = (select block.bid from block where block.bid = ? and block.lehrer = ?));";
 
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
                 PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
                 PreparedStatement stmtDeleteAntwort = myConn.prepareStatement(deleteString)) {
@@ -917,7 +925,7 @@ public class SqlLogik {
                 + "and lehrer.lid = ?;";
         ResultSet rsSearchSchueler = null;
 
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtSearchSchueler = myConn.prepareStatement(searchString)) {
 
             stmtSearchSchueler.setString(1, blockName);
@@ -958,7 +966,7 @@ public class SqlLogik {
                 + "and schueler.nachname = ?;";
         ResultSet rsSearchAntworten = null;
 
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
+        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
                 PreparedStatement stmtSearchAntworten = myConn.prepareStatement(loadString)) {
 
             stmtSearchAntworten.setString(1, block);
