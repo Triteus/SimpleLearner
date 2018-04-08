@@ -41,7 +41,6 @@ public class SqlLogik {
 
     private String databaseUrl = "jdbc:mysql://localhost:3306/SimpleLearner?useSSL=false";
 
-
     public Properties getUserInfo() {
         return userInfo;
     }
@@ -94,6 +93,17 @@ public class SqlLogik {
         this.currentUser = currentUser;
     }
 
+    public void setDatabaseUrl(String dbUrl) { this.databaseUrl = dbUrl; }
+
+    public String getDatabaseUrl() { return databaseUrl; }
+
+
+    public SqlLogik(String dbUrl) {
+        this();
+        databaseUrl = dbUrl;
+
+    }
+
     public SqlLogik() {
 
         String dbUserName = "root";
@@ -111,6 +121,7 @@ public class SqlLogik {
         absolvierteSchueler = new ArrayList<>();
         tempAntwortenSchueler = new ArrayList<>();
         currentUser = null;
+
     }
 
     /**
