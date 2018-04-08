@@ -38,8 +38,7 @@ public class SqlLogik {
     private String currentUser;
     private boolean isFertig;
 
-
-    private String databaseUrl = "jdbc:mysql://localhost:3306/SimpleLearner?useSSL=false";
+    private String databaseUrl = DbConfig.url;
 
     public Properties getUserInfo() {
         return userInfo;
@@ -106,12 +105,10 @@ public class SqlLogik {
 
     public SqlLogik() {
 
-        String dbUserName = "root";
-        String dbPassword = "test";
 
         userInfo = new Properties();
-        userInfo.put("user", dbUserName); //Username der MySql-Datenbank
-        userInfo.put("password", dbPassword); //Passwort der MySql-Datenbank
+        userInfo.put("user", DbConfig.username); //Username der MySql-Datenbank
+        userInfo.put("password", DbConfig.password); //Passwort der MySql-Datenbank
         faecher = new ArrayList<>();
         kategorien = new ArrayList<>();
         aufgabenbloecke = new ArrayList<>();
@@ -121,6 +118,8 @@ public class SqlLogik {
         absolvierteSchueler = new ArrayList<>();
         tempAntwortenSchueler = new ArrayList<>();
         currentUser = null;
+
+
 
     }
 
