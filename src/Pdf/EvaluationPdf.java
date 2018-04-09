@@ -5,7 +5,7 @@
  */
 package Pdf;
 
-import sql.SqlLogik;
+import sql.SqlConnection;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -26,12 +26,12 @@ import java.sql.SQLException;
  * Erzeugt eine PDF-Datei die zur Evaluation der Antworten für den Lehrer gedacht ist
  * @author Marcel
  */
-public class EvaluationsPdf {
-    SqlLogik sql;
+public class EvaluationPdf {
+    SqlConnection sql;
     File file;
     Document document;
     
-    public EvaluationsPdf(SqlLogik sql, File f) {
+    public EvaluationPdf(SqlConnection sql, File f) {
         this.sql = sql;
         this.file = f;
         this.document = new Document();
