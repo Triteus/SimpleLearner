@@ -92,9 +92,13 @@ public class SqlLogik {
         this.currentUser = currentUser;
     }
 
-    public void setDatabaseUrl(String dbUrl) { this.databaseUrl = dbUrl; }
+    public void setDatabaseUrl(String dbUrl) {
+        this.databaseUrl = dbUrl;
+    }
 
-    public String getDatabaseUrl() { return databaseUrl; }
+    public String getDatabaseUrl() {
+        return databaseUrl;
+    }
 
 
     public SqlLogik(String dbUrl) {
@@ -120,26 +124,40 @@ public class SqlLogik {
         currentUser = null;
 
 
-
     }
 
     /**
      * Initialisiert eine Tabelle, welche dazu dient, später zu überprüfen ob
      * der Schüler das jeweilige Quiz schon gelöst hat
      *
-     * @param blockBez - Der Name des jeweiligen Aufgabenblocks
+     * @param blockBez  - Der Name des jeweiligen Aufgabenblocks
      * @param aSchueler - Der Name des lösenden Schülers
      * @throws SQLException
      */
-    public void startBlock(String blockBez, String aSchueler) throws SQLException {
+
+    public void startBlock(String blockBez, String aSchueler) {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            startBlock(blockBez, aSchueler, myConn);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    void startBlock(String blockBez, String aSchueler, Connection myConn) {
+
         String startString = "insert into schuelerloestblock(schueler, block) values(?, ?);";
         String suchString = "select block, schueler from schuelerloestblock;";
         ResultSet rsSuche = null;
         boolean confirm = true;
 
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtStart = myConn.prepareStatement(startString);
-                Statement stmtSuche = myConn.createStatement()) {
+        try {
+
+            PreparedStatement stmtStart = myConn.prepareStatement(startString);
+            Statement stmtSuche = myConn.createStatement();
 
             rsSuche = stmtSuche.executeQuery(suchString);
             while (rsSuche.next()) {
@@ -147,17 +165,25 @@ public class SqlLogik {
                     if (rsSuche.getString("schueler").equals(aSchueler)) {
                         confirm = false;
                     }
+
+                }
+                if (confirm) {
+                    stmtStart.setString(1, aSchueler);
+                    stmtStart.setString(2, blockBez);
+
+                    stmtStart.executeUpdate();
                 }
             }
-            if (confirm) {
-                stmtStart.setString(1, aSchueler);
-                stmtStart.setString(2, blockBez);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
 
-                stmtStart.executeUpdate();
-            }
         } finally {
             if (rsSuche != null) {
-                rsSuche.close();
+                try {
+                    rsSuche.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -165,14 +191,29 @@ public class SqlLogik {
     /**
      * Überprüft die Antwort des Schülers zur jeweiligen Aufgabenstellung
      *
-     * @param blockBez - Der Name des Aufgabenblocks
+     * @param blockBez  - Der Name des Aufgabenblocks
      * @param aSchueler - Der Name(Username) des aktiven Schülers
-     * @param aFrage - Der Fragetext der aktuellen Aufgabe
-     * @param aAntwort - Die Antwort des Schülers
+     * @param aFrage    - Der Fragetext der aktuellen Aufgabe
+     * @param aAntwort  - Die Antwort des Schülers
      * @return Gibt einen boolean zur Anzeige zurück
      * @throws SQLException
      */
+
+
     public boolean checkAntwort(String blockBez, String aSchueler, String aFrage, String aAntwort) throws SQLException {
+
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            return checkAntwort(blockBez, aSchueler, aFrage, aAntwort, myConn);
+
+        } catch (SQLException exc) {
+            throw exc;
+        }
+    }
+
+
+    boolean checkAntwort(String blockBez, String aSchueler, String aFrage, String aAntwort, Connection myConn) {
 
         String antwortString = "insert into schuelerloestaufgabe(aufgabe, schueler, antwortS) values((select aufgabe.aid from aufgabe "
                 + "where aufgabe.block = ? and aufgabe.frage = ?), ?, ?);";
@@ -189,9 +230,9 @@ public class SqlLogik {
 
         boolean check = false;
 
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement setAntwort = myConn.prepareStatement(antwortString);
-                PreparedStatement stmtAntwort = myConn.prepareStatement(stmtString)) {
+        try {
+            PreparedStatement setAntwort = myConn.prepareStatement(antwortString);
+            PreparedStatement stmtAntwort = myConn.prepareStatement(stmtString);
 
             setAntwort.setString(1, blockBez);
             setAntwort.setString(2, aFrage);
@@ -209,20 +250,26 @@ public class SqlLogik {
                     check = true;
                 }
             }
-        } catch (SQLException exc) {
-            throw exc;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         } finally {
+
             if (rsAntwort != null) {
-                rsAntwort.close();
+                try {
+                    rsAntwort.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
         return check;
     }
 
     /**
      * Überprüft den Login des Users
      *
-     * @param user - der Nutzername
+     * @param user     - der Nutzername
      * @param password - das Nutzerpasswort
      * @return Gibt einen Zweistelligen Boolean-Array zurück. Boolean[0] gibt
      * an, ob die eingegebenen Daten korrekt sind. Boolean[1] gibt an ob es ein
@@ -234,8 +281,8 @@ public class SqlLogik {
         String stringCheck = "select * from lehrer, schueler";
         boolean[] checkPassword = new boolean[2];
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                Statement stmtCheck = myConn.createStatement();
-                ResultSet rsCheck = stmtCheck.executeQuery(stringCheck)) {
+             Statement stmtCheck = myConn.createStatement();
+             ResultSet rsCheck = stmtCheck.executeQuery(stringCheck)) {
 
             while (rsCheck.next()) {
                 if (rsCheck.getString("lid").equals(user)) {
@@ -267,8 +314,8 @@ public class SqlLogik {
      */
     public void loadFaecher() throws SQLException {
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                Statement stmtFach = myConn.createStatement();
-                ResultSet rsFach = stmtFach.executeQuery("select fid from fach;")) {
+             Statement stmtFach = myConn.createStatement();
+             ResultSet rsFach = stmtFach.executeQuery("select fid from fach;")) {
 
             if (faecher != null) {
                 faecher.clear();
@@ -294,7 +341,7 @@ public class SqlLogik {
         String faecherString = "select fach from lehrerunterrichtet where lehrer = ?";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
 
             stmtFach.setString(1, lehrer);
             rsFach = stmtFach.executeQuery();
@@ -326,7 +373,7 @@ public class SqlLogik {
         String faecherString = "select fid from fach where fid like ?";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
 
             stmtFach.setString(1, "%" + filter + "%");
             rsFach = stmtFach.executeQuery();
@@ -359,7 +406,7 @@ public class SqlLogik {
         String faecherString = "select fach from lehrerunterrichtet where lehrer = ? and fach like ?;";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
 
             stmtFach.setString(1, lehrer);
             stmtFach.setString(2, "%" + filter + "%");
@@ -392,7 +439,7 @@ public class SqlLogik {
         String kategorieString = "select kid from kategorie where fach = ?";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
 
             stmtFach.setString(1, fach);
             rsFach = stmtFach.executeQuery();
@@ -417,8 +464,8 @@ public class SqlLogik {
     /**
      * Filtert alle Kategorien
      *
-     * @param fach - das ausgewählte Fach (benötigt, da Liste komplett neu aus
-     * der Datenbank geladen wird)
+     * @param fach   - das ausgewählte Fach (benötigt, da Liste komplett neu aus
+     *               der Datenbank geladen wird)
      * @param filter - der zu filternde String
      * @throws SQLException
      */
@@ -426,7 +473,7 @@ public class SqlLogik {
         String kategorieString = "select kid from kategorie where fach = ? and kid like ?";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
 
             stmtFach.setString(1, fach);
             stmtFach.setString(2, "%" + filter + "%");
@@ -453,14 +500,14 @@ public class SqlLogik {
      * Lädt alle Blöcke, die der Lehrer selbst erstellt hat
      *
      * @param kategorie - die aktive Kategorie
-     * @param lehrer - der aktive Lehrer
+     * @param lehrer    - der aktive Lehrer
      * @throws SQLException
      */
     public void loadBloeckeLehrer(String kategorie, String lehrer) throws SQLException {
         String blockString = "select bid from block where kategorie = ? and lehrer = ?;";
         ResultSet rsBlock = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
+             PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
 
             stmtBlock.setString(1, kategorie);
             stmtBlock.setString(2, lehrer);
@@ -485,7 +532,7 @@ public class SqlLogik {
      * Lädt alle vorhandenen Blöcke der aktiven Kategorie
      *
      * @param kategorie - aktive Kategorie
-     * @param schueler - aktiver Schüler
+     * @param schueler  - aktiver Schüler
      * @throws SQLException
      */
     public void loadBloeckeSchueler(String kategorie, String schueler) throws SQLException {
@@ -497,8 +544,8 @@ public class SqlLogik {
         ResultSet rsBlock = null;
         ResultSet rsBlockTwo = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
-                PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
+             PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
+             PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
 
             //alle Kategorien werden geladen
             stmtBlock.setString(1, kategorie);
@@ -549,15 +596,15 @@ public class SqlLogik {
      * Filtert die Blöcke des Lehrers
      *
      * @param kategorie - die aktive Kategorie
-     * @param lehrer - der aktive Lehrer
-     * @param filter - der zu filternde String
+     * @param lehrer    - der aktive Lehrer
+     * @param filter    - der zu filternde String
      * @throws SQLException
      */
     public void loadFilteredBloeckeLehrer(String kategorie, String lehrer, String filter) throws SQLException {
         String blockString = "select bid from block where kategorie = ? and lehrer = ? and bid like ?;";
         ResultSet rsBlock = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
+             PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
 
             stmtBlock.setString(1, kategorie);
             stmtBlock.setString(2, lehrer);
@@ -583,8 +630,8 @@ public class SqlLogik {
      * Filtert alle Blöcke der aktiven Kategorie für den Schüler
      *
      * @param kategorie - die aktive Kategorie
-     * @param schueler - der aktive Schüler
-     * @param filter - der zu filternde String
+     * @param schueler  - der aktive Schüler
+     * @param filter    - der zu filternde String
      * @throws SQLException
      */
     public void loadFilteredBloeckeSchueler(String kategorie, String schueler, String filter) throws SQLException {
@@ -596,8 +643,8 @@ public class SqlLogik {
         ResultSet rsBlock = null;
         ResultSet rsBlockTwo = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
-                PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
+             PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
+             PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
 
             //alle Kategorien werden geladen
             stmtBlock.setString(1, kategorie);
@@ -661,7 +708,7 @@ public class SqlLogik {
         String stringFrage = "select frage from aufgabe join block on aufgabe.block = block.bid where block.bid = ?";
         ResultSet rsFrage = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtFrage = myConn.prepareStatement(stringFrage)) {
+             PreparedStatement stmtFrage = myConn.prepareStatement(stringFrage)) {
 
             stmtFrage.setString(1, block);
             rsFrage = stmtFrage.executeQuery();
@@ -696,7 +743,7 @@ public class SqlLogik {
                 + "join block on aufgabe.block = block.bid where block.bid = ? and aufgabe.frage = ?";
         ResultSet rsAntworten = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtAntworten = myConn.prepareStatement(stringAntworten)) {
+             PreparedStatement stmtAntworten = myConn.prepareStatement(stringAntworten)) {
 
             stmtAntworten.setString(1, block);
             stmtAntworten.setString(2, frage);
@@ -720,15 +767,27 @@ public class SqlLogik {
      * Löscht den gewünschten Aufgabenblock
      *
      * @param blockname - der ausgewählte Aufgabenblock
-     * @param lehrer - der durchführende Lehrer
+     * @param lehrer    - der durchführende Lehrer
      * @param kategorie - die Kategorie, in welcher sich der Aufgabenblock
-     * befindet
+     *                  befindet
      * @throws SQLException
      */
+
     public void deleteBlock(String blockname, String lehrer, String kategorie) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            deleteBlock(blockname, lehrer, kategorie, myConn);
+
+        } catch (SQLException exc) {
+            throw exc;
+        }
+    }
+
+    void deleteBlock(String blockname, String lehrer, String kategorie, Connection myConn) throws SQLException {
         String loeschenString = "delete from block where bid = ? and lehrer = ? and kategorie = ?;";
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtLoeschen = myConn.prepareStatement(loeschenString)) {
+        try {
+            PreparedStatement stmtLoeschen = myConn.prepareStatement(loeschenString);
 
             stmtLoeschen.setString(1, blockname);
             stmtLoeschen.setString(2, lehrer);
@@ -744,47 +803,79 @@ public class SqlLogik {
     /**
      * Erzeugt einen neuen Aufgabenblock für den Lehrer
      *
-     * @param block - der Name des neuen Blocks
-     * @param lehrer - der aktive Lehrer
+     * @param block     - der Name des neuen Blocks
+     * @param lehrer    - der aktive Lehrer
      * @param kategorie - die Kategorie, in welcher sich der Aufgabenblock
-     * befindet
+     *                  befindet
      * @throws SQLException
      */
+
     public void createBlock(String block, String lehrer, String kategorie) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            createBlock(block, lehrer, kategorie, myConn);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
+    }
+
+    void createBlock(String block, String lehrer, String kategorie, Connection myConn) throws SQLException {
+
         String createString = "insert into block(bid, lehrer, kategorie) values(?, ?, ?);";
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtUpdate = myConn.prepareStatement(createString)) {
+        try {
+            PreparedStatement stmtUpdate = myConn.prepareStatement(createString);
 
             stmtUpdate.setString(1, block);
             stmtUpdate.setString(2, lehrer);
             stmtUpdate.setString(3, kategorie);
-
             stmtUpdate.executeUpdate();
 
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw ex;
         }
-
     }
 
     /**
      * Erzeugt eine neue Kategorie im aktiven Fach des Lehrers
      *
-     * @param katName - der Name der neuen Kategorie
+     * @param katName  - der Name der neuen Kategorie
      * @param fachName - der Name des aktiven Fachs
      * @throws SQLException
      */
+
     public void createKategorie(String katName, String fachName) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            createKategorie(katName, fachName, myConn);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
+    }
+
+    void createKategorie(String katName, String fachName, Connection myConn) throws SQLException {
+
         String createString = "insert into kategorie(kid, fach) values(?,?);";
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtUpdate = myConn.prepareStatement(createString)) {
+        try {
+            PreparedStatement stmtUpdate = myConn.prepareStatement(createString);
 
             stmtUpdate.setString(1, katName);
             stmtUpdate.setString(2, fachName);
 
             stmtUpdate.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw ex;
         }
     }
 
+
     private void createAntwortenInAufgabe(String block, String frage, VBox vb) throws SQLException {
+
         for (int i = 0; i < vb.getChildren().size(); i++) {
             HBox hb = (HBox) vb.getChildren().get(i);
             for (int j = 0; j < hb.getChildren().size(); j++) {
@@ -802,12 +893,26 @@ public class SqlLogik {
         }
     }
 
+
     private void createAntwort(String antworttext, boolean isRichtig, String block, String frage) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            createAntwort(antworttext, isRichtig, block, frage, myConn);
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
+
+    }
+
+    void createAntwort(String antworttext, boolean isRichtig, String block, String frage, Connection myConn) throws SQLException {
         String insertAntwort = "insert into antwort(antworttext, istrue, aufgabe) values(?, ?, (select aufgabe.aid from aufgabe where "
                 + "aufgabe.block = ? and aufgabe.frage = ?));";
 
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtNewAntwort = myConn.prepareStatement(insertAntwort)) {
+        try {
+            PreparedStatement stmtNewAntwort = myConn.prepareStatement(insertAntwort);
 
             stmtNewAntwort.setString(1, antworttext);
             stmtNewAntwort.setBoolean(2, isRichtig);
@@ -816,6 +921,9 @@ public class SqlLogik {
 
             System.out.println("createAntwort davor");
             stmtNewAntwort.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw ex;
         }
 
     }
@@ -824,31 +932,59 @@ public class SqlLogik {
      * Ändert den Namen des aktiven Blocks
      *
      * @param blockAlt - alter Blockname
-     * @param lehrer - bearbeitender Lehrer
+     * @param lehrer   - bearbeitender Lehrer
      * @param blockNeu - neuer Blockname
      * @throws SQLException
      */
+
     public void updateQuiz(String blockAlt, String lehrer, String blockNeu) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            updateQuiz(blockAlt, lehrer, blockNeu, myConn);
+        } catch (SQLException ex) {
+            throw ex;
+        }
+    }
+
+    public void updateQuiz(String blockAlt, String lehrer, String blockNeu, Connection myConn) throws SQLException {
         String updateString = "update block set block.bid = ? where block.bid = ? and block.lehrer = ?;";
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtNewName = myConn.prepareStatement(updateString)) {
+        try {
+
+            PreparedStatement stmtNewName = myConn.prepareStatement(updateString);
             stmtNewName.setString(1, blockNeu);
             stmtNewName.setString(2, blockAlt);
             stmtNewName.setString(3, lehrer);
 
             stmtNewName.executeUpdate();
+        } catch (SQLException ex) {
+            throw ex;
         }
     }
 
     /**
      * Ändert den Fragetext der aktuellen Aufgabe
      *
-     * @param block - der aktuelle Block
+     * @param block    - der aktuelle Block
      * @param frageAlt - der alte Fragetext
      * @param frageNeu - der neue Fragetext
      * @throws SQLException
      */
+
+
     public void updateTask(String block, String frageAlt, String frageNeu) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            updateTask(block, frageAlt, frageNeu, myConn);
+        } catch (SQLException ex) {
+
+            throw ex;
+        }
+    }
+
+    void updateTask(String block, String frageAlt, String frageNeu, Connection myConn) throws SQLException {
+
         String deleteSchuelerBlockString = "delete from schuelerloestblock where block = ?;";
         String deleteSchuelerAufgabeString = "delete from schuelerloestaufgabe where schuelerloestaufgabe.aufgabe IN (select aid from aufgabe "
                 + "where aufgabe.block = ?);";
@@ -858,10 +994,10 @@ public class SqlLogik {
         } else {
             updateString = "insert into aufgabe(block, frage) values(?, ?);";
         }
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
-                PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
-                PreparedStatement stmtNewQuestion = myConn.prepareStatement(updateString)) {
+        try {
+            PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
+            PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
+            PreparedStatement stmtNewQuestion = myConn.prepareStatement(updateString);
 
             stmtSchuelerAufgabe.setString(1, block);
             stmtSchuelerAufgabe.executeUpdate();
@@ -878,8 +1014,16 @@ public class SqlLogik {
             }
 
             stmtNewQuestion.executeUpdate();
-        }
+
+    } catch(
+    SQLException ex)
+
+    {
+        ex.printStackTrace();
+        throw ex;
     }
+
+}
 
     /**
      * Aktualisiert die Antwortmöglichkeiten einer Aufgabe
@@ -890,17 +1034,29 @@ public class SqlLogik {
      * @param neueAntworten - die Liste mit den neuen Antwortmöglichkeiten
      * @throws SQLException
      */
+
+
     public void updateAnswers(String block, String frage, String lehrer, VBox neueAntworten) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+             updateAnswers(block, frage, lehrer, neueAntworten, myConn);
+        } catch (SQLException ex) {
+            throw ex;
+        }
+    }
+
+    public void updateAnswers(String block, String frage, String lehrer, VBox neueAntworten, Connection myConn) throws SQLException {
         String deleteSchuelerBlockString = "delete from schuelerloestblock where block = ?;";
         String deleteSchuelerAufgabeString = "delete from schuelerloestaufgabe where schuelerloestaufgabe.aufgabe IN (select aid from aufgabe "
                 + "where aufgabe.block = ?);";
         String deleteString = "delete from antwort where antwort.aufgabe = (select aufgabe.aid from aufgabe where aufgabe.frage = ? "
                 + "and aufgabe.block = (select block.bid from block where block.bid = ? and block.lehrer = ?));";
 
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
-                PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
-                PreparedStatement stmtDeleteAntwort = myConn.prepareStatement(deleteString)) {
+        try {
+            PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
+            PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
+            PreparedStatement stmtDeleteAntwort = myConn.prepareStatement(deleteString);
 
             stmtSchuelerAufgabe.setString(1, block);
             stmtSchuelerAufgabe.executeUpdate();
@@ -916,6 +1072,9 @@ public class SqlLogik {
             stmtDeleteAntwort.executeUpdate();
 
             createAntwortenInAufgabe(block, frage, neueAntworten);
+
+    } catch (SQLException ex) {
+            throw ex;
         }
     }
 

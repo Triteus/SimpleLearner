@@ -6,6 +6,7 @@ package main;
  * and open the template in the editor.
  */
 import Pdf.EvaluationsPdf;
+import com.itextpdf.text.DocumentException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

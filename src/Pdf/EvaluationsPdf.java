@@ -42,7 +42,7 @@ public class EvaluationsPdf {
      * 
      * @param block - Der Name des Aufgabenblocks
      * @param lehrer - Der Name des zuständigen Lehrers
-     * @param schueler - Der Name des jeweiligen Schülers
+     * @param vSchueler - Der Name des jeweiligen Schülers
      * @throws DocumentException
      * @throws IOException 
      * @throws SQLException 
