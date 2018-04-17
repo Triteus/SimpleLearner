@@ -6,6 +6,7 @@ package main;
  * and open the template in the editor.
  */
 import Pdf.EvaluationsPdf;
+import com.itextpdf.text.DocumentException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -23,7 +24,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import sql.SqlLogik;
+import sql.SqlImplementation;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,10 +36,10 @@ import java.sql.SQLException;
  */
 public class SimpleLearnerGUI extends Application {
 
-    SqlLogik sql;
+    SqlImplementation sql;
 
     public SimpleLearnerGUI() {
-        sql = new SqlLogik();
+        sql = new SqlImplementation();
     }
 
     @Override
@@ -469,8 +470,8 @@ public class SimpleLearnerGUI extends Application {
                     System.out.println(exc.getMessage());
                 }
             }
-            for (int i = 0; i < sql.getFaecher().size(); i++) {
-                centralList.getChildren().add(new SubjectButton(sql.getFaecher().get(i), i).getKategorieButton());
+            for (int i = 0; i < sql.getSubjects().size(); i++) {
+                centralList.getChildren().add(new SubjectButton(sql.getSubjects().get(i), i).getKategorieButton());
             }
         } else {
             if (this.filter.getText().isEmpty()) {
@@ -486,8 +487,8 @@ public class SimpleLearnerGUI extends Application {
                     System.out.println(exc.getMessage());
                 }
             }
-            for (int i = 0; i < sql.getFaecher().size(); i++) {
-                centralList.getChildren().add(new SubjectButton(sql.getFaecher().get(i), i).getKategorieButton());
+            for (int i = 0; i < sql.getSubjects().size(); i++) {
+                centralList.getChildren().add(new SubjectButton(sql.getSubjects().get(i), i).getKategorieButton());
             }
         }
 
@@ -515,8 +516,8 @@ public class SimpleLearnerGUI extends Application {
                     System.out.println(exc.getMessage());
                 }
             }
-            for (int i = 0; i < sql.getAufgabenbloecke().size(); i++) {
-                centralList.getChildren().add(new QuizButton(sql.getAufgabenbloecke().get(i), i).getQuizButton()); // ersetze ("SimpleLearnerGUI "+i) mit Aufgabenname
+            for (int i = 0; i < sql.getTaskBlocks().size(); i++) {
+                centralList.getChildren().add(new QuizButton(sql.getTaskBlocks().get(i), i).getQuizButton()); // ersetze ("SimpleLearnerGUI "+i) mit Aufgabenname
             }
             centralList.getChildren().add(new BtnNewElement("Verzeich").getBtnNeuesElement());
         } else {
@@ -533,8 +534,8 @@ public class SimpleLearnerGUI extends Application {
                     System.out.println(exc.getMessage());
                 }
             }
-            for (int i = 0; i < sql.getAufgabenbloecke().size(); i++) {
-                centralList.getChildren().add(new QuizButton(sql.getAufgabenbloecke().get(i), i).getQuizButton()); // ersetze ("SimpleLearnerGUI "+i) mit Aufgabenname
+            for (int i = 0; i < sql.getTaskBlocks().size(); i++) {
+                centralList.getChildren().add(new QuizButton(sql.getTaskBlocks().get(i), i).getQuizButton()); // ersetze ("SimpleLearnerGUI "+i) mit Aufgabenname
             }
         }
 
@@ -559,8 +560,8 @@ public class SimpleLearnerGUI extends Application {
                 System.out.println(exc.getMessage());
             }
         }
-        for (int i = 0; i < sql.getKategorien().size(); i++) {
-            centralList.getChildren().add(new CategoryButton(sql.getKategorien().get(i), i).getCategoryButton()); // ersetze ("SimpleLearnerGUI "+i) mit Aufgabenname
+        for (int i = 0; i < sql.getCategories().size(); i++) {
+            centralList.getChildren().add(new CategoryButton(sql.getCategories().get(i), i).getCategoryButton()); // ersetze ("SimpleLearnerGUI "+i) mit Aufgabenname
         }
         //centerListe.getChildren().add(new CategoryButton("Modul 0", 0).getCategoryButton());
         //centerListe.getChildren().add(new CategoryButton("Modul 1", 1).getCategoryButton());
@@ -622,9 +623,9 @@ public class SimpleLearnerGUI extends Application {
                 //bp.setLeft(vbMehr);
                 try {
                     sql.loadAbsolvierteSchueler(btnQuizName, loginName.getText());
-                    if (sql.getAbsolvierteSchueler().size() > 0) {
-                        for (int i = 0; i < sql.getAbsolvierteSchueler().size(); i++) {
-                            Button btnStudentName = new Button(sql.getAbsolvierteSchueler().get(i));
+                    if (sql.getStudentsSolved().size() > 0) {
+                        for (int i = 0; i < sql.getStudentsSolved().size(); i++) {
+                            Button btnStudentName = new Button(sql.getStudentsSolved().get(i));
                             btnStudentName.setPrefWidth(250);
                             btnStudentName.setId("btnSchueler");
                             vbStudents.setMargin(btnStudentName, new Insets(0, 0, 0, 0));
@@ -680,12 +681,12 @@ public class SimpleLearnerGUI extends Application {
                     } catch (SQLException exc) {
                         System.out.println(exc.getMessage());
                     }
-                    if (sql.getFragen().size() > 0) {
+                    if (sql.getQuestions().size() > 0) {
                         setBlockPar(btnQuizName);
-                        setFragePar(sql.getFragen().indexOf(sql.getFragen().get(taskNumber)));
+                        setFragePar(sql.getQuestions().indexOf(sql.getQuestions().get(taskNumber)));
                         blockNameLabel.setText(btnQuizName);
-                        fillAntwortAuswahl(btnQuizName, sql.getFragen().get(taskNumber));
-                        taskText.setText(sql.getFragen().get(taskNumber));
+                        fillAntwortAuswahl(btnQuizName, sql.getQuestions().get(taskNumber));
+                        taskText.setText(sql.getQuestions().get(taskNumber));
                     } else {
                         setBlockPar(btnQuizName);
                         blockNameLabel.setText(btnQuizName);
@@ -693,7 +694,7 @@ public class SimpleLearnerGUI extends Application {
                         fillAntwortAuswahl(null, null);
                     }
                     //buildAufgabenPane();// Parameter
-                    if (isTeacher || (!isTeacher && sql.getFragen().size() > 0)) {
+                    if (isTeacher || (!isTeacher && sql.getQuestions().size() > 0)) {
                         scene.setRoot(getAufgabenPane());
                         tempStage.setScene(scene);
                         tempStage.show();
@@ -988,10 +989,10 @@ public class SimpleLearnerGUI extends Application {
             } catch (SQLException exc) {
                 System.out.println(exc.getMessage());
             }
-            for (int i = 0; i < sql.getAntwortenTemp().size()/*anzahl der Antworten*/; i++) {
+            for (int i = 0; i < sql.getAnswersTemp().size()/*anzahl der Antworten*/; i++) {
                 // hole Aufgabenname der i.ten Aufgabeneinheit
                 // Übergebe AufgabenName
-                antwortAuswahl.getChildren().add(new btnAntwort(sql.getAntwortenTemp().get(i)).getBtnAntwort());
+                antwortAuswahl.getChildren().add(new btnAntwort(sql.getAnswersTemp().get(i)).getBtnAntwort());
             }
         }
     }
@@ -1248,13 +1249,13 @@ public class SimpleLearnerGUI extends Application {
                     antwort = AntwortGroup.getSelectedToggle().getUserData().toString();
                 }
 
-                //checkAntwort(antwort);
+                //checkAnswer(antwort);
                 if (!isTeacher) {
                     if (antwort != null) {
                         try {
                             sql.startBlock(blockPar, loginName.getText());
                             end = System.currentTimeMillis() - start;
-                            if (sql.checkAntwort(blockPar, loginName.getText(), sql.getFragen().get(nummerFragePar), antwort) == true) {
+                            if (sql.checkAnswer(blockPar, loginName.getText(), sql.getQuestions().get(nummerFragePar), antwort) == true) {
                                 System.out.println("richtig");
                                 auswertungAntwort.setText("richtig");
                             } else {
@@ -1269,7 +1270,7 @@ public class SimpleLearnerGUI extends Application {
                 }
                 //ersetze "Bestätigen"-Button mit "Nächste"-Button
                 if (!isTeacher && antwort != null) {
-                    if (nummerFragePar < sql.getFragen().size() - 1) {
+                    if (nummerFragePar < sql.getQuestions().size() - 1) {
                         navigator.add(btnNaechsteAufgabe, 0, 1);
                     } else {
                         navigator.getChildren().clear();
@@ -1305,9 +1306,9 @@ public class SimpleLearnerGUI extends Application {
                 navigator.add(btnNaechsteAufgabe, 0, 1); // btnBestätigen ein
                 navigator.add(btnZurueck, 1, 1);
                 if (nummerFragePar - 1 >= 0) {
-                    taskText.setText(sql.getFragen().get(nummerFragePar - 1));
+                    taskText.setText(sql.getQuestions().get(nummerFragePar - 1));
                     nummerFragePar--;
-                    fillAntwortAuswahl(blockPar, sql.getFragen().get(nummerFragePar));
+                    fillAntwortAuswahl(blockPar, sql.getQuestions().get(nummerFragePar));
                     auswertungAntwort.setText("");
                 }
 
@@ -1335,13 +1336,13 @@ public class SimpleLearnerGUI extends Application {
                     if (isTeacher) {
                         navigator.add(btnZurueck, 1, 1);
                     }
-                    if (isTeacher && (nummerFragePar + 1 >= sql.getFragen().size())) {
+                    if (isTeacher && (nummerFragePar + 1 >= sql.getQuestions().size())) {
                         taskText.setText(null);
                         fillAntwortAuswahl(null, null);
                     } else {
-                        taskText.setText(sql.getFragen().get(nummerFragePar + 1));
+                        taskText.setText(sql.getQuestions().get(nummerFragePar + 1));
                         nummerFragePar++;
-                        fillAntwortAuswahl(blockPar, sql.getFragen().get(nummerFragePar));
+                        fillAntwortAuswahl(blockPar, sql.getQuestions().get(nummerFragePar));
                     }
                     auswertungAntwort.setText("");
 

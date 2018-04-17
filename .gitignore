@@ -62,3 +62,6 @@ fabric.properties
 
 # Manually added
 build/
+
+.idea/
+*.sql
