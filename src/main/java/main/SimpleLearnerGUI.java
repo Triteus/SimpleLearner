@@ -306,6 +306,7 @@ public class SimpleLearnerGUI extends Application {
             tempStage.setTitle("SimpleLearner - " + loginName.getText());
             tempStage.setScene(scene);
             tempStage.setTitle("SimpleLearner");
+
             tempStage.show();
         });
         btnBack.setOnAction((ActionEvent e) -> {
