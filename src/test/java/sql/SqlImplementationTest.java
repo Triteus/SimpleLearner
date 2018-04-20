@@ -1,5 +1,6 @@
 package sql;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +29,12 @@ class SqlImplementationTest {
         Statement statement = connection.createStatement();
         statement.execute("INSERT INTO schueler(sid, passwort, vorname, nachname) VALUES " +
                 "('test', 'password123', 'Test', 'User')");
+    }
+
+    @AfterAll
+    static void finish() throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.execute("DELETE FROM schueler WHERE sid = 'test'");
     }
 
     @Test
