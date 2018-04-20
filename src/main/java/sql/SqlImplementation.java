@@ -6,6 +6,7 @@
 package sql;
 
 import Pdf.AntwortPdfObjekt;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
+
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -108,7 +110,7 @@ public class SqlImplementation {
      * Initializes a table that is used to check whether a student has solved a task
      *
      * @param blockDesignator - The name of the task block
-     * @param aStudent - The name of the student solving
+     * @param aStudent        - The name of the student solving
      * @throws SQLException
      */
     public void startBlock(String blockDesignator, String aStudent) throws SQLException {
@@ -118,8 +120,8 @@ public class SqlImplementation {
         boolean confirm = true;
 
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtStart = myConn.prepareStatement(startString);
-                Statement stmtSearch = myConn.createStatement()) {
+             PreparedStatement stmtStart = myConn.prepareStatement(startString);
+             Statement stmtSearch = myConn.createStatement()) {
 
             rsSearch = stmtSearch.executeQuery(searchString);
             while (rsSearch.next()) {
@@ -146,9 +148,9 @@ public class SqlImplementation {
      * Überprüft die Antwort des Schülers zur jeweiligen Aufgabenstellung
      *
      * @param blockDesignator - Der Name des Aufgabenblocks
-     * @param student - Der Name(Username) des aktiven Schülers
-     * @param question - Der Fragetext der aktuellen Aufgabe
-     * @param answer - Die Antwort des Schülers
+     * @param student         - Der Name(Username) des aktiven Schülers
+     * @param question        - Der Fragetext der aktuellen Aufgabe
+     * @param answer          - Die Antwort des Schülers
      * @return Gibt einen boolean zur Anzeige zurück
      * @throws SQLException
      */
@@ -170,8 +172,8 @@ public class SqlImplementation {
         boolean check = false;
 
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement setAntwort = myConn.prepareStatement(answerQuery);
-                PreparedStatement stmtAntwort = myConn.prepareStatement(stmtString)) {
+             PreparedStatement setAntwort = myConn.prepareStatement(answerQuery);
+             PreparedStatement stmtAntwort = myConn.prepareStatement(stmtString)) {
 
             setAntwort.setString(1, blockDesignator);
             setAntwort.setString(2, question);
@@ -202,42 +204,38 @@ public class SqlImplementation {
     /**
      * Überprüft den Login des Users
      *
-     * @param user - der Nutzername
+     * @param user     - der Nutzername
      * @param password - das Nutzerpasswort
      * @return Gibt einen Zweistelligen Boolean-Array zurück. Boolean[0] gibt
      * an, ob die eingegebenen Daten korrekt sind. Boolean[1] gibt an ob es ein
      * Schüler oder ein Lehrer ist um die jeweilige Oberfläche zu laden.
      * @throws SQLException
      */
-    public boolean[] checkLogin(String user, String password) throws SQLException {
+    public boolean[] checkLogin(String user, String password, Connection connection) throws SQLException {
 
         String stringCheck = "select * from lehrer, schueler";
         boolean[] checkPassword = new boolean[2];
-        try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                Statement stmtCheck = myConn.createStatement();
-                ResultSet rsCheck = stmtCheck.executeQuery(stringCheck)) {
 
-            while (rsCheck.next()) {
-                if (rsCheck.getString("lid").equals(user)) {
-                    checkPassword[0] = rsCheck.getString("lehrer.passwort").equals(password);
-                    if (checkPassword[0] == true) {
-                        checkPassword[1] = true; //1 für Lehrer
-                        currentUser = rsCheck.getString("lehrer.vorname") + " " + rsCheck.getString("lehrer.nachname");
-                    }
-                } else if (rsCheck.getString("sid").equals(user)) {
-                    checkPassword[0] = rsCheck.getString("schueler.passwort").equals(password);
-                    if (checkPassword[0] == true) {
-                        checkPassword[1] = false;//0 für Schüler
-                        currentUser = rsCheck.getString("schueler.vorname") + " " + rsCheck.getString("schueler.nachname");
-                    }
+        Statement stmtCheck = connection.createStatement();
+        ResultSet rsCheck = stmtCheck.executeQuery(stringCheck);
+
+        while (rsCheck.next()) {
+            if (rsCheck.getString("lid").equals(user)) {
+                checkPassword[0] = rsCheck.getString("lehrer.passwort").equals(password);
+                if (checkPassword[0]) {
+                    checkPassword[1] = true; //1 für Lehrer
+                    currentUser = rsCheck.getString("lehrer.vorname") + " " + rsCheck.getString("lehrer.nachname");
+                }
+            } else if (rsCheck.getString("sid").equals(user)) {
+                checkPassword[0] = rsCheck.getString("schueler.passwort").equals(password);
+                if (checkPassword[0]) {
+                    checkPassword[1] = false;//0 für Schüler
+                    currentUser = rsCheck.getString("schueler.vorname") + " " + rsCheck.getString("schueler.nachname");
                 }
             }
-
-            return checkPassword;
-
-        } catch (SQLException exc) {
-            throw exc;
         }
+
+        return checkPassword;
     }
 
     /**
@@ -247,8 +245,8 @@ public class SqlImplementation {
      */
     public void loadFaecher() throws SQLException {
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                Statement stmtFach = myConn.createStatement();
-                ResultSet rsFach = stmtFach.executeQuery("select fid from fach;")) {
+             Statement stmtFach = myConn.createStatement();
+             ResultSet rsFach = stmtFach.executeQuery("select fid from fach;")) {
 
             if (subjects != null) {
                 subjects.clear();
@@ -274,7 +272,7 @@ public class SqlImplementation {
         String faecherString = "select fach from lehrerunterrichtet where lehrer = ?";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
 
             stmtFach.setString(1, lehrer);
             rsFach = stmtFach.executeQuery();
@@ -306,7 +304,7 @@ public class SqlImplementation {
         String faecherString = "select fid from fach where fid like ?";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
 
             stmtFach.setString(1, "%" + filter + "%");
             rsFach = stmtFach.executeQuery();
@@ -339,7 +337,7 @@ public class SqlImplementation {
         String faecherString = "select fach from lehrerunterrichtet where lehrer = ? and fach like ?;";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(faecherString)) {
 
             stmtFach.setString(1, lehrer);
             stmtFach.setString(2, "%" + filter + "%");
@@ -372,7 +370,7 @@ public class SqlImplementation {
         String kategorieString = "select kid from kategorie where fach = ?";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
 
             stmtFach.setString(1, fach);
             rsFach = stmtFach.executeQuery();
@@ -397,8 +395,8 @@ public class SqlImplementation {
     /**
      * Filtert alle Kategorien
      *
-     * @param fach - das ausgewählte Fach (benötigt, da Liste komplett neu aus
-     * der Datenbank geladen wird)
+     * @param fach   - das ausgewählte Fach (benötigt, da Liste komplett neu aus
+     *               der Datenbank geladen wird)
      * @param filter - der zu filternde String
      * @throws SQLException
      */
@@ -406,7 +404,7 @@ public class SqlImplementation {
         String kategorieString = "select kid from kategorie where fach = ? and kid like ?";
         ResultSet rsFach = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
+             PreparedStatement stmtFach = myConn.prepareStatement(kategorieString)) {
 
             stmtFach.setString(1, fach);
             stmtFach.setString(2, "%" + filter + "%");
@@ -433,14 +431,14 @@ public class SqlImplementation {
      * Lädt alle Blöcke, die der Lehrer selbst erstellt hat
      *
      * @param kategorie - die aktive Kategorie
-     * @param lehrer - der aktive Lehrer
+     * @param lehrer    - der aktive Lehrer
      * @throws SQLException
      */
     public void loadBloeckeLehrer(String kategorie, String lehrer) throws SQLException {
         String blockString = "select bid from block where kategorie = ? and lehrer = ?;";
         ResultSet rsBlock = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
+             PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
 
             stmtBlock.setString(1, kategorie);
             stmtBlock.setString(2, lehrer);
@@ -465,7 +463,7 @@ public class SqlImplementation {
      * Lädt alle vorhandenen Blöcke der aktiven Kategorie
      *
      * @param kategorie - aktive Kategorie
-     * @param schueler - aktiver Schüler
+     * @param schueler  - aktiver Schüler
      * @throws SQLException
      */
     public void loadBloeckeSchueler(String kategorie, String schueler) throws SQLException {
@@ -477,8 +475,8 @@ public class SqlImplementation {
         ResultSet rsBlock = null;
         ResultSet rsBlockTwo = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
-                PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
+             PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
+             PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
 
             //alle Kategorien werden geladen
             stmtBlock.setString(1, kategorie);
@@ -529,15 +527,15 @@ public class SqlImplementation {
      * Filtert die Blöcke des Lehrers
      *
      * @param kategorie - die aktive Kategorie
-     * @param lehrer - der aktive Lehrer
-     * @param filter - der zu filternde String
+     * @param lehrer    - der aktive Lehrer
+     * @param filter    - der zu filternde String
      * @throws SQLException
      */
     public void loadFilteredBloeckeLehrer(String kategorie, String lehrer, String filter) throws SQLException {
         String blockString = "select bid from block where kategorie = ? and lehrer = ? and bid like ?;";
         ResultSet rsBlock = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
+             PreparedStatement stmtBlock = myConn.prepareStatement(blockString)) {
 
             stmtBlock.setString(1, kategorie);
             stmtBlock.setString(2, lehrer);
@@ -563,8 +561,8 @@ public class SqlImplementation {
      * Filtert alle Blöcke der aktiven Kategorie für den Schüler
      *
      * @param kategorie - die aktive Kategorie
-     * @param schueler - der aktive Schüler
-     * @param filter - der zu filternde String
+     * @param schueler  - der aktive Schüler
+     * @param filter    - der zu filternde String
      * @throws SQLException
      */
     public void loadFilteredBloeckeSchueler(String kategorie, String schueler, String filter) throws SQLException {
@@ -576,8 +574,8 @@ public class SqlImplementation {
         ResultSet rsBlock = null;
         ResultSet rsBlockTwo = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
-                PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
+             PreparedStatement stmtBlock = myConn.prepareStatement(blockString);
+             PreparedStatement stmtBlockTwo = myConn.prepareStatement(blockStringTwo);) {
 
             //alle Kategorien werden geladen
             stmtBlock.setString(1, kategorie);
@@ -641,7 +639,7 @@ public class SqlImplementation {
         String stringFrage = "select frage from aufgabe join block on aufgabe.block = block.bid where block.bid = ?";
         ResultSet rsFrage = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtFrage = myConn.prepareStatement(stringFrage)) {
+             PreparedStatement stmtFrage = myConn.prepareStatement(stringFrage)) {
 
             stmtFrage.setString(1, block);
             rsFrage = stmtFrage.executeQuery();
@@ -676,7 +674,7 @@ public class SqlImplementation {
                 + "join block on aufgabe.block = block.bid where block.bid = ? and aufgabe.frage = ?";
         ResultSet rsAntworten = null;
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtAntworten = myConn.prepareStatement(stringAntworten)) {
+             PreparedStatement stmtAntworten = myConn.prepareStatement(stringAntworten)) {
 
             stmtAntworten.setString(1, block);
             stmtAntworten.setString(2, frage);
@@ -700,15 +698,15 @@ public class SqlImplementation {
      * Löscht den gewünschten Aufgabenblock
      *
      * @param blockname - der ausgewählte Aufgabenblock
-     * @param lehrer - der durchführende Lehrer
+     * @param lehrer    - der durchführende Lehrer
      * @param kategorie - die Kategorie, in welcher sich der Aufgabenblock
-     * befindet
+     *                  befindet
      * @throws SQLException
      */
     public void deleteBlock(String blockname, String lehrer, String kategorie) throws SQLException {
         String loeschenString = "delete from block where bid = ? and lehrer = ? and kategorie = ?;";
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtLoeschen = myConn.prepareStatement(loeschenString)) {
+             PreparedStatement stmtLoeschen = myConn.prepareStatement(loeschenString)) {
 
             stmtLoeschen.setString(1, blockname);
             stmtLoeschen.setString(2, lehrer);
@@ -724,16 +722,16 @@ public class SqlImplementation {
     /**
      * Erzeugt einen neuen Aufgabenblock für den Lehrer
      *
-     * @param block - der Name des neuen Blocks
-     * @param lehrer - der aktive Lehrer
+     * @param block     - der Name des neuen Blocks
+     * @param lehrer    - der aktive Lehrer
      * @param kategorie - die Kategorie, in welcher sich der Aufgabenblock
-     * befindet
+     *                  befindet
      * @throws SQLException
      */
     public void createBlock(String block, String lehrer, String kategorie) throws SQLException {
         String createString = "insert into block(bid, lehrer, kategorie) values(?, ?, ?);";
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtUpdate = myConn.prepareStatement(createString)) {
+             PreparedStatement stmtUpdate = myConn.prepareStatement(createString)) {
 
             stmtUpdate.setString(1, block);
             stmtUpdate.setString(2, lehrer);
@@ -748,14 +746,14 @@ public class SqlImplementation {
     /**
      * Erzeugt eine neue Kategorie im aktiven Fach des Lehrers
      *
-     * @param katName - der Name der neuen Kategorie
+     * @param katName  - der Name der neuen Kategorie
      * @param fachName - der Name des aktiven Fachs
      * @throws SQLException
      */
     public void createKategorie(String katName, String fachName) throws SQLException {
         String createString = "insert into kategorie(kid, fach) values(?,?);";
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtUpdate = myConn.prepareStatement(createString)) {
+             PreparedStatement stmtUpdate = myConn.prepareStatement(createString)) {
 
             stmtUpdate.setString(1, katName);
             stmtUpdate.setString(2, fachName);
@@ -782,12 +780,13 @@ public class SqlImplementation {
         }
     }
 
-    private void createAntwort(String antworttext, boolean isRichtig, String block, String frage) throws SQLException {
+    private void createAntwort(String antworttext, boolean isRichtig, String block, String frage) throws
+            SQLException {
         String insertAntwort = "insert into antwort(antworttext, istrue, aufgabe) values(?, ?, (select aufgabe.aid from aufgabe where "
                 + "aufgabe.block = ? and aufgabe.frage = ?));";
 
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtNewAntwort = myConn.prepareStatement(insertAntwort)) {
+             PreparedStatement stmtNewAntwort = myConn.prepareStatement(insertAntwort)) {
 
             stmtNewAntwort.setString(1, antworttext);
             stmtNewAntwort.setBoolean(2, isRichtig);
@@ -804,14 +803,14 @@ public class SqlImplementation {
      * Ändert den Namen des aktiven Blocks
      *
      * @param blockAlt - alter Blockname
-     * @param lehrer - bearbeitender Lehrer
+     * @param lehrer   - bearbeitender Lehrer
      * @param blockNeu - neuer Blockname
      * @throws SQLException
      */
     public void updateQuiz(String blockAlt, String lehrer, String blockNeu) throws SQLException {
         String updateString = "update block set block.bid = ? where block.bid = ? and block.lehrer = ?;";
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtNewName = myConn.prepareStatement(updateString)) {
+             PreparedStatement stmtNewName = myConn.prepareStatement(updateString)) {
             stmtNewName.setString(1, blockNeu);
             stmtNewName.setString(2, blockAlt);
             stmtNewName.setString(3, lehrer);
@@ -823,7 +822,7 @@ public class SqlImplementation {
     /**
      * Ändert den Fragetext der aktuellen Aufgabe
      *
-     * @param block - der aktuelle Block
+     * @param block    - der aktuelle Block
      * @param frageAlt - der alte Fragetext
      * @param frageNeu - der neue Fragetext
      * @throws SQLException
@@ -839,9 +838,9 @@ public class SqlImplementation {
             updateString = "insert into aufgabe(block, frage) values(?, ?);";
         }
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
-                PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
-                PreparedStatement stmtNewQuestion = myConn.prepareStatement(updateString)) {
+             PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
+             PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
+             PreparedStatement stmtNewQuestion = myConn.prepareStatement(updateString)) {
 
             stmtSchuelerAufgabe.setString(1, block);
             stmtSchuelerAufgabe.executeUpdate();
@@ -864,9 +863,9 @@ public class SqlImplementation {
     /**
      * Aktualisiert die Antwortmöglichkeiten einer Aufgabe
      *
-     * @param block - der aktuelle Block
-     * @param frage - die Frage der Aufgabe
-     * @param lehrer - der bearbeitende Lehrer
+     * @param block         - der aktuelle Block
+     * @param frage         - die Frage der Aufgabe
+     * @param lehrer        - der bearbeitende Lehrer
      * @param neueAntworten - die Liste mit den neuen Antwortmöglichkeiten
      * @throws SQLException
      */
@@ -878,9 +877,9 @@ public class SqlImplementation {
                 + "and aufgabe.block = (select block.bid from block where block.bid = ? and block.lehrer = ?));";
 
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
-                PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
-                PreparedStatement stmtDeleteAntwort = myConn.prepareStatement(deleteString)) {
+             PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
+             PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
+             PreparedStatement stmtDeleteAntwort = myConn.prepareStatement(deleteString)) {
 
             stmtSchuelerAufgabe.setString(1, block);
             stmtSchuelerAufgabe.executeUpdate();
@@ -904,7 +903,7 @@ public class SqlImplementation {
      * haben
      *
      * @param blockName - der gewählte Block
-     * @param lehrer - der zuständige Lehrer
+     * @param lehrer    - der zuständige Lehrer
      * @throws SQLException
      */
     public void loadAbsolvierteSchueler(String blockName, String lehrer) throws SQLException {
@@ -916,7 +915,7 @@ public class SqlImplementation {
         ResultSet rsSearchSchueler = null;
 
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtSearchSchueler = myConn.prepareStatement(searchString)) {
+             PreparedStatement stmtSearchSchueler = myConn.prepareStatement(searchString)) {
 
             stmtSearchSchueler.setString(1, blockName);
             stmtSearchSchueler.setString(2, lehrer);
@@ -933,13 +932,14 @@ public class SqlImplementation {
     /**
      * Lädt alle Antworten eines Schülers zu dem spezifizierten Block
      *
-     * @param block - der spezifizierte Block
-     * @param lehrer - der zuständige Lehrer
+     * @param block     - der spezifizierte Block
+     * @param lehrer    - der zuständige Lehrer
      * @param vSchueler - der abgefragte Schülervorname
      * @param nSchueler - der abgefragte Schülernachname
      * @throws SQLException
      */
-    public void loadAbsolvierteAntworten(String block, String lehrer, String vSchueler, String nSchueler) throws SQLException {
+    public void loadAbsolvierteAntworten(String block, String lehrer, String vSchueler, String nSchueler) throws
+            SQLException {
         String loadString = "select lehrer.vorname, lehrer.nachname, schueler.vorname, schueler.nachname, aufgabe.frage, schuelerloestaufgabe.antwortS, antwort.antworttext, fach.kuerzel, fach.fid, kategorie.kid "
                 + "from schueler "
                 + "join schuelerloestaufgabe on schueler.sid = schuelerloestaufgabe.schueler "
@@ -957,7 +957,7 @@ public class SqlImplementation {
         ResultSet rsSearchAntworten = null;
 
         try (Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/SimpleLearner?useSSL=true", userInfo);
-                PreparedStatement stmtSearchAntworten = myConn.prepareStatement(loadString)) {
+             PreparedStatement stmtSearchAntworten = myConn.prepareStatement(loadString)) {
 
             stmtSearchAntworten.setString(1, block);
             stmtSearchAntworten.setString(2, lehrer);

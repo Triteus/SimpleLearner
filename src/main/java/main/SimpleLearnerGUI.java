@@ -28,7 +28,10 @@ import sql.SqlImplementation;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  *
@@ -36,7 +39,8 @@ import java.sql.SQLException;
  */
 public class SimpleLearnerGUI extends Application {
 
-    SqlImplementation sql;
+    private SqlImplementation sql;
+    private String dbURL = "dbc:mysql://localhost:3306/SimpleLearner?useSSL=true";
 
     public SimpleLearnerGUI() {
         sql = new SqlImplementation();
@@ -171,12 +175,18 @@ public class SimpleLearnerGUI extends Application {
                 //System.out.println("------------------------------");   
                 boolean[] check = new boolean[2];
                 try {
-                    check = sql.checkLogin(loginName.getText(), loginPassword.getText());
-                    if (check[0] == true) {
-                        if (check[1] == true) {//LehrerPane erstellen
+                    Properties userInfo = new Properties();
+                    userInfo.put("username", "simple-learner-tes");
+                    userInfo.put("password", "SimpleLearner");
+
+                    Connection connection = DriverManager.getConnection(dbURL, userInfo);
+
+                    check = sql.checkLogin(loginName.getText(), loginPassword.getText(), connection);
+                    if (check[0]) {
+                        if (check[1]) {//LehrerPane erstellen
                             isTeacher = check[1];
                             System.out.println("Anmeldung Lehrer >>> true");
-                        } else if (check[1] == false) { //SchülerPane erstellen
+                        } else { //SchülerPane erstellen
                             isTeacher = check[1];
                             System.out.println("Anmeldung Lehrer >>> false");
                         }
