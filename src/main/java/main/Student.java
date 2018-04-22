@@ -11,14 +11,12 @@ import java.util.ArrayList;
 public class Student extends UserInstance {
 
 
-
-    public Student(String name) {
-        this.username = name;
+    public Student(SqlLogik sql) {
+        super(sql);
     }
 
-
     @Override
-    public ArrayList<String> loadSubjects(SqlLogik sql, String filter) {
+    public ArrayList<String> loadSubjects(String filter) {
 
         if (filter.isEmpty()) {
             try {
@@ -39,7 +37,7 @@ public class Student extends UserInstance {
     }
 
     @Override
-    public ArrayList<String> loadTaskBlocks(SqlLogik sql, String category, String filter) throws Exception {
+    public ArrayList<String> loadTaskBlocks(String category, String filter) throws Exception {
 
         if (filter.isEmpty()) {
             try {

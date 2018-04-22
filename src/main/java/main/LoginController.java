@@ -28,42 +28,39 @@ public class LoginController {
     //Öffnet das Main User Interface
 
     @FXML
-    void onSubmitClick(ActionEvent event) {
+    void onLoginClick(ActionEvent event) {
 
         String username = tf_name.getCharacters().toString();
         String password = tf_password.getCharacters().toString();
-        boolean loginSuccess = false;
+        UserInstance instance = null;
 
         try {
-            loginSuccess = GUIManager.initUser(username, password);
+            instance = Authenticator.login(username, password);
         } catch (Exception e) {
+            System.out.println("Fehler bei der Anmeldung: ");
             e.printStackTrace();
         }
 
-
-        if(loginSuccess) {
+        if(instance != null) {
 
             Stage mainUIStage;
-
-            Parent pane = null;
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
 
             try {
-                pane = FXMLLoader.load(getClass().getResource("/main.fxml"));
+
+                Node source = (Node) event.getSource();
+                mainUIStage = (Stage) source.getScene().getWindow();
+                mainUIStage.setScene(new Scene(loader.load()));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            Scene scene = new Scene(pane);
-
-            Node source = (Node) event.getSource();
-            mainUIStage = (Stage) source.getScene().getWindow();
-
-            mainUIStage.setScene(scene);
-
+            MainUIController controller = loader.getController();
+            controller.initData(instance);
 
         } else {
             System.out.println("Ungültige Eingabe");
         }
     }
-
 }

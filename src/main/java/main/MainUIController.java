@@ -2,35 +2,45 @@ package main;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MainUIController {
 
-    @FXML
-    public void initialize() {
+    private UserInstance userInstance;
 
-        tf_username.setText(GUIManager.getUsername());
+
+    void initData(UserInstance instance) {
+
+        this.userInstance = instance;
+
+        tf_username.setText(userInstance.getUsername());
 
         loadSubjects();
-
     }
 
     private void loadSubjects() {
 
-
         ArrayList<String> subjectNames = null;
+
         try {
-            subjectNames = GUIManager.loadSubjects();
+            subjectNames = userInstance.loadSubjects("");
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         addElementsToContainer(subjectNames);
 
         element_container.getChildren().forEach((el) -> {
@@ -47,11 +57,13 @@ public class MainUIController {
     private void loadCategories(String subjectName) {
 
         ArrayList<String> categoryNames = null;
+
         try {
-            categoryNames = GUIManager.loadCategories(subjectName);
+            categoryNames = userInstance.loadCategories(subjectName, "");
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         addElementsToContainer(categoryNames);
 
             element_container.getChildren().forEach((el) -> {
@@ -67,10 +79,10 @@ public class MainUIController {
 
     private void loadTaskBlocks(String categoryName) {
 
-
         ArrayList<String> blockNames = null;
+
         try {
-            blockNames = GUIManager.loadTaskBlocks(categoryName);
+            blockNames = userInstance.loadTaskBlocks(categoryName, "");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,12 +92,11 @@ public class MainUIController {
 
             final Button blockButton = (Button) el;
             blockButton.setOnAction((event) -> {
-                //loadCategories(blockButton.getText());
+                loadTaskBlock(blockButton.getText());
             });
         });
 
     }
-
 
     private void addElementsToContainer(ArrayList<String> elNames) {
 
@@ -103,7 +114,23 @@ public class MainUIController {
     }
 
 
-    private void loadTaskBlock() {
+    private void loadTaskBlock(String blockName) {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock.fxml"));
+
+        Stage stage = new Stage();
+        try {
+            stage.setScene(
+                    new Scene(loader.load())
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        TaskBlockController controller = loader.getController();
+        controller.initData(blockName);
+
+        stage.show();
 
     }
 

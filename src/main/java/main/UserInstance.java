@@ -12,14 +12,20 @@ import java.util.ArrayList;
 public abstract class UserInstance {
 
 
+    SqlLogik sql;
     String username;
 
+    public UserInstance(SqlLogik sql) {
+        this.sql = sql;
+        this.username = sql.getCurrentUser();
+    }
 
     public String getUsername() {
         return username;
     }
 
-    public ArrayList<String> loadCategories(SqlLogik sql, String subject, String filterText) throws Exception {
+
+    public ArrayList<String> loadCategories(String subject, String filterText) throws Exception {
 
         if (filterText.isEmpty()) {
             try {
@@ -41,9 +47,9 @@ public abstract class UserInstance {
 
     }
 
-    public abstract ArrayList<String> loadSubjects(SqlLogik sql, String filterText) throws Exception;
+    public abstract ArrayList<String> loadSubjects(String filterText) throws Exception;
 
-    public abstract ArrayList<String> loadTaskBlocks(SqlLogik sql, String category, String filterText) throws Exception;
+    public abstract ArrayList<String> loadTaskBlocks(String category, String filterText) throws Exception;
 
     public abstract void fillDirectory();
 
