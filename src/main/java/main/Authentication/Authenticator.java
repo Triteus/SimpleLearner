@@ -1,11 +1,14 @@
-package main;
+package main.Authentication;
 
+import main.Session.StudentSession;
+import main.Session.TeacherSession;
+import main.Session.UserSession;
 import sql.SqlLogik;
 
 
-class Authenticator {
+public class Authenticator {
 
-    static UserSession login(String username, String password) throws Exception {
+    public static UserSession login(String username, String password) throws Exception {
 
         SqlLogik sql = new SqlLogik();
 

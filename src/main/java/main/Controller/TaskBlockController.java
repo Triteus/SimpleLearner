@@ -1,10 +1,11 @@
-package main;
+package main.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import main.Session.UserSession;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

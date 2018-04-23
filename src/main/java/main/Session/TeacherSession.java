@@ -1,5 +1,6 @@
-package main;
+package main.Session;
 
+import main.Session.UserSession;
 import sql.SqlLogik;
 import java.sql.SQLException;
 import java.util.ArrayList;

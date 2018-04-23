@@ -1,4 +1,4 @@
-package main;
+package main.Session;
 
 
 import sql.SqlLogik;
@@ -10,9 +10,9 @@ import java.util.ArrayList;
 public abstract class UserSession {
 
 
-    SqlLogik sql;
-    String username;
-    boolean editAllowed;
+    protected SqlLogik sql;
+    protected String username;
+    protected boolean editAllowed = false;
 
     public UserSession(SqlLogik sql, String username) {
         this.sql = sql;
@@ -23,6 +23,9 @@ public abstract class UserSession {
         return username;
     }
 
+    public boolean isEditAllowed() {
+        return editAllowed;
+    }
 
     public ArrayList<String> loadCategories(String subject, String filterText) throws Exception {
 

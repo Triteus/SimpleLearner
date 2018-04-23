@@ -1,4 +1,4 @@
-package main;
+package main.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import main.Session.UserSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -90,7 +91,6 @@ public class MainUIController {
             });
         });
 
-
     }
 
     private void loadCategories(String subject) {
@@ -105,32 +105,33 @@ public class MainUIController {
 
         addElementsToContainer(categoryNames);
 
+        element_container.getChildren().forEach((el) -> {
 
-            element_container.getChildren().forEach((el) -> {
+            final Button catButton = (Button) el;
 
-                final Button catButton = (Button) el;
-
-                catButton.setOnAction((event) -> {
-                    loadTaskBlocks(catButton.getText());
-                });
-
+            catButton.setOnAction((event) -> {
+                loadTaskBlocks(catButton.getText());
             });
 
+        });
 
-            if (userInstance.editAllowed) {
-                final Button categoryAdder = new Button("+++ Neue Kategorie hinzufügen +++");
 
-                element_container.getChildren().add(categoryAdder);
+        if (userInstance.isEditAllowed()) {
+            final Button categoryAdder = new Button("+++ Neue Kategorie hinzufügen +++");
+            categoryAdder.setPrefWidth(2000);
 
-                categoryAdder.setOnAction((event) -> {
-                    try {
-                        userInstance.addCategory("testCategoryCreation", subject );
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                });
+            element_container.getChildren().add(categoryAdder);
 
-            }
+
+            categoryAdder.setOnAction((event) -> {
+                try {
+                    userInstance.addCategory("testCategoryCreation", subject );
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+
+        }
     }
 
     private void loadTaskBlocks(String category) {
@@ -151,9 +152,9 @@ public class MainUIController {
             });
         });
 
-        if (userInstance.editAllowed) {
+        if (userInstance.isEditAllowed()) {
             final Button blockAdder = new Button("+++ Neuen Testblock hinzufügen +++");
-
+            blockAdder.setPrefWidth(2000);
             element_container.getChildren().add(blockAdder);
 
             blockAdder.setOnAction((event) -> {
@@ -164,9 +165,7 @@ public class MainUIController {
                 }
                 */
             });
-
         }
-
     }
 
     private void addElementsToContainer(ArrayList<String> elNames) {

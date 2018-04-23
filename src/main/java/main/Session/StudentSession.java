@@ -1,8 +1,9 @@
-package main;
+package main.Session;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import main.Controller.TaskBlockController;
 import sql.SqlLogik;
 
 import java.io.IOException;
