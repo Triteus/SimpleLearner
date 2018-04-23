@@ -125,8 +125,8 @@ public class SqlLogik {
      * Initialisiert eine Tabelle, welche dazu dient, später zu überprüfen ob
      * der Schüler das jeweilige Quiz schon gelöst hat
      *
-     * @param sectionName  - Der Name des jeweiligen Aufgabenblocks
-     * @param aStudent - Der Name des lösenden Schülers
+     * @param sectionName - Der Name des jeweiligen Aufgabenblocks
+     * @param aStudent    - Der Name des lösenden Schülers
      * @throws SQLException
      */
 
@@ -186,10 +186,10 @@ public class SqlLogik {
     /**
      * Überprüft die Antwort des Schülers zur jeweiligen Aufgabenstellung
      *
-     * @param blockName  - Der Name des Aufgabenblocks
-     * @param aStudent - Der Name(Username) des aktiven Schülers
-     * @param aQuestion    - Der Fragetext der aktuellen Aufgabe
-     * @param aAnswer  - Die Antwort des Schülers
+     * @param blockName - Der Name des Aufgabenblocks
+     * @param aStudent  - Der Name(Username) des aktiven Schülers
+     * @param aQuestion - Der Fragetext der aktuellen Aufgabe
+     * @param aAnswer   - Die Antwort des Schülers
      * @return Gibt einen boolean zur Anzeige zurück
      * @throws SQLException
      */
@@ -261,6 +261,11 @@ public class SqlLogik {
         return check;
     }
 
+    public boolean[] checkLogin(String user, String password) throws SQLException {
+        Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+        return checkLogin(user, password, myConn);
+    }
+
     /**
      * Überprüft den Login des Users
      *
@@ -271,35 +276,30 @@ public class SqlLogik {
      * Schüler oder ein Lehrer ist um die jeweilige Oberfläche zu laden.
      * @throws SQLException
      */
-    public boolean[] checkLogin(String user, String password) throws SQLException {
+    boolean[] checkLogin(String user, String password, Connection connection) throws SQLException {
 
         String stringCheck = "select * from lehrer, schueler";
         boolean[] checkPassword = new boolean[2];
-        try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-             Statement stmtCheck = myConn.createStatement();
-             ResultSet rsCheck = stmtCheck.executeQuery(stringCheck)) {
+        Statement stmtCheck = connection.createStatement();
+        ResultSet rsCheck = stmtCheck.executeQuery(stringCheck);
 
-            while (rsCheck.next()) {
-                if (rsCheck.getString("lid").equals(user)) {
-                    checkPassword[0] = rsCheck.getString("lehrer.passwort").equals(password);
-                    if (checkPassword[0] == true) {
-                        checkPassword[1] = true; //1 für Lehrer
-                        currentUser = rsCheck.getString("lehrer.vorname") + " " + rsCheck.getString("lehrer.nachname");
-                    }
-                } else if (rsCheck.getString("sid").equals(user)) {
-                    checkPassword[0] = rsCheck.getString("schueler.passwort").equals(password);
-                    if (checkPassword[0] == true) {
-                        checkPassword[1] = false;//0 für Schüler
-                        currentUser = rsCheck.getString("schueler.vorname") + " " + rsCheck.getString("schueler.nachname");
-                    }
+        while (rsCheck.next()) {
+            if (rsCheck.getString("lid").equals(user)) {
+                checkPassword[0] = rsCheck.getString("lehrer.passwort").equals(password);
+                if (checkPassword[0] == true) {
+                    checkPassword[1] = true; //1 für Lehrer
+                    currentUser = rsCheck.getString("lehrer.vorname") + " " + rsCheck.getString("lehrer.nachname");
+                }
+            } else if (rsCheck.getString("sid").equals(user)) {
+                checkPassword[0] = rsCheck.getString("schueler.passwort").equals(password);
+                if (checkPassword[0] == true) {
+                    checkPassword[1] = false;//0 für Schüler
+                    currentUser = rsCheck.getString("schueler.vorname") + " " + rsCheck.getString("schueler.nachname");
                 }
             }
-
-            return checkPassword;
-
-        } catch (SQLException exc) {
-            throw exc;
         }
+
+        return checkPassword;
     }
 
     /**
@@ -625,8 +625,8 @@ public class SqlLogik {
      * Filtert alle Blöcke der aktiven Kategorie für den Schüler
      *
      * @param category - die aktive Kategorie
-     * @param schueler  - der aktive Schüler
-     * @param filter    - der zu filternde String
+     * @param schueler - der aktive Schüler
+     * @param filter   - der zu filternde String
      * @throws SQLException
      */
     public void loadFilteredStudentSections(String category, String schueler, String filter) throws SQLException {
@@ -1010,22 +1010,22 @@ public class SqlLogik {
 
             stmtNewQuestion.executeUpdate();
 
-    } catch(
-    SQLException ex)
+        } catch (
+                SQLException ex)
 
-    {
-        ex.printStackTrace();
-        throw ex;
+        {
+            ex.printStackTrace();
+            throw ex;
+        }
+
     }
-
-}
 
     /**
      * Aktualisiert die Antwortmöglichkeiten einer Aufgabe
      *
-     * @param block - der aktuelle Block
-     * @param frage - die Frage der Aufgabe
-     * @param lehrer - der bearbeitende Lehrer
+     * @param block         - der aktuelle Block
+     * @param frage         - die Frage der Aufgabe
+     * @param lehrer        - der bearbeitende Lehrer
      * @param neueAntworten - die Liste mit den neuen Antwortmöglichkeiten
      * @throws SQLException
      */
@@ -1035,7 +1035,7 @@ public class SqlLogik {
 
         try {
             Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-             updateAnswers(block, frage, lehrer, neueAntworten, myConn);
+            updateAnswers(block, frage, lehrer, neueAntworten, myConn);
         } catch (SQLException ex) {
             throw ex;
         }
@@ -1068,7 +1068,7 @@ public class SqlLogik {
 
             createAnswersInTask(block, frage, neueAntworten);
 
-    } catch (SQLException ex) {
+        } catch (SQLException ex) {
             throw ex;
         }
     }
@@ -1078,7 +1078,7 @@ public class SqlLogik {
      * haben
      *
      * @param blockName - der gewählte Block
-     * @param lehrer - der zuständige Lehrer
+     * @param lehrer    - der zuständige Lehrer
      * @throws SQLException
      */
     public void loadStudentsSolvedTask(String blockName, String lehrer) throws SQLException {
@@ -1090,7 +1090,7 @@ public class SqlLogik {
         ResultSet rsSearchSchueler = null;
 
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtSearchSchueler = myConn.prepareStatement(searchString)) {
+             PreparedStatement stmtSearchSchueler = myConn.prepareStatement(searchString)) {
 
             stmtSearchSchueler.setString(1, blockName);
             stmtSearchSchueler.setString(2, lehrer);
@@ -1107,8 +1107,8 @@ public class SqlLogik {
     /**
      * Lädt alle Antworten eines Schülers zu dem spezifizierten Block
      *
-     * @param section - der spezifizierte Block
-     * @param teacher - der zuständige Lehrer
+     * @param section   - der spezifizierte Block
+     * @param teacher   - der zuständige Lehrer
      * @param vSchueler - der abgefragte Schülervorname
      * @param nSchueler - der abgefragte Schülernachname
      * @throws SQLException
@@ -1131,7 +1131,7 @@ public class SqlLogik {
         ResultSet rsSearchAntworten = null;
 
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-                PreparedStatement stmtSearchAntworten = myConn.prepareStatement(loadString)) {
+             PreparedStatement stmtSearchAntworten = myConn.prepareStatement(loadString)) {
 
             stmtSearchAntworten.setString(1, section);
             stmtSearchAntworten.setString(2, teacher);
