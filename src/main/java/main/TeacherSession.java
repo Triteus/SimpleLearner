@@ -4,10 +4,11 @@ import sql.SqlLogik;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Teacher extends UserInstance {
+public class TeacherSession extends UserSession {
 
-    public Teacher(SqlLogik sql, String username) {
+    public TeacherSession(SqlLogik sql, String username) {
         super(sql, username);
+        editAllowed = true;
     }
 
     @Override
@@ -69,5 +70,11 @@ public class Teacher extends UserInstance {
     @Override
     public void printResultsAsPdf() {
 
+    }
+
+    @Override
+    public void addCategory(String category, String subject) throws SQLException {
+
+        sql.createCategory(category, subject);
     }
 }

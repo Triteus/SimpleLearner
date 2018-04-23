@@ -2,9 +2,6 @@ package main;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import sql.SqlLogik;
 
@@ -12,11 +9,12 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Student extends UserInstance {
+public class StudentSession extends UserSession {
 
 
-    public Student(SqlLogik sql, String username) {
+    public StudentSession(SqlLogik sql, String username) {
         super(sql, username);
+        editAllowed = false;
     }
 
     @Override
@@ -95,6 +93,11 @@ public class Student extends UserInstance {
 
     @Override
     public void printResultsAsPdf() {
+
+    }
+
+    @Override
+    public void addCategory(String category, String subject) throws SQLException {
 
     }
 }

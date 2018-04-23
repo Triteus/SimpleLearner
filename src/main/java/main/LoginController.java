@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -32,7 +31,7 @@ public class LoginController {
 
         String username = tf_name.getCharacters().toString();
         String password = tf_password.getCharacters().toString();
-        UserInstance instance = null;
+        UserSession instance = null;
 
         try {
             instance = Authenticator.login(username, password);

@@ -4,12 +4,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -20,10 +18,10 @@ import java.util.ArrayList;
 public class MainUIController {
 
     @FXML
-    private TextField tf_username;
+    private Button btn_logoff;
 
     @FXML
-    private Button btn_logoff;
+    private TextField tf_username;
 
     @FXML
     private ToolBar breadcrumbBar;
@@ -41,13 +39,28 @@ public class MainUIController {
 
     }
 
+    @FXML
+    void onLogoffClick(ActionEvent event) {
 
+        Stage mainUIStage;
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
 
-    private UserInstance userInstance;
+        try {
+            Node source = (Node) event.getSource();
+            mainUIStage = (Stage) source.getScene().getWindow();
+            mainUIStage.setScene(new Scene(loader.load()));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private UserSession userInstance;
 
 
     //gets called from the LoginController
-    void initData(UserInstance instance) {
+    void initData(UserSession instance) {
 
         this.userInstance = instance;
 
@@ -77,19 +90,21 @@ public class MainUIController {
             });
         });
 
+
     }
 
-    private void loadCategories(String subjectName) {
+    private void loadCategories(String subject) {
 
         ArrayList<String> categoryNames = null;
 
         try {
-            categoryNames = userInstance.loadCategories(subjectName, "");
+            categoryNames = userInstance.loadCategories(subject, "");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         addElementsToContainer(categoryNames);
+
 
             element_container.getChildren().forEach((el) -> {
 
@@ -100,26 +115,57 @@ public class MainUIController {
                 });
 
             });
+
+
+            if (userInstance.editAllowed) {
+                final Button categoryAdder = new Button("+++ Neue Kategorie hinzufügen +++");
+
+                element_container.getChildren().add(categoryAdder);
+
+                categoryAdder.setOnAction((event) -> {
+                    try {
+                        userInstance.addCategory("testCategoryCreation", subject );
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+            }
     }
 
-    private void loadTaskBlocks(String categoryName) {
+    private void loadTaskBlocks(String category) {
 
         ArrayList<String> blockNames = null;
 
         try {
-            blockNames = userInstance.loadTaskBlocks(categoryName, "");
+            blockNames = userInstance.loadTaskBlocks(category, "");
         } catch (Exception e) {
             e.printStackTrace();
         }
         addElementsToContainer(blockNames);
 
         element_container.getChildren().forEach((el) -> {
-
             final Button blockButton = (Button) el;
             blockButton.setOnAction((event) -> {
                 loadTaskBlock(blockButton.getText());
             });
         });
+
+        if (userInstance.editAllowed) {
+            final Button blockAdder = new Button("+++ Neuen Testblock hinzufügen +++");
+
+            element_container.getChildren().add(blockAdder);
+
+            blockAdder.setOnAction((event) -> {
+                /*try {
+                    userInstance.addCategory("testCategoryCreation", categoryName );
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                */
+            });
+
+        }
 
     }
 
@@ -143,7 +189,5 @@ public class MainUIController {
         userInstance.loadTaskBlock(blockName);
 
     }
-
-
 
 }

@@ -2,8 +2,6 @@ package main;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -54,11 +52,11 @@ public class TaskBlockController {
     private ArrayList<String> questions;
     private String currentQuestion;
     private ArrayList<String> answersForCurrentQuestion;
-    private UserInstance userInstance;
+    private UserSession userInstance;
 
 
-
-    public void initData(String taskBlockName, UserInstance userInstance) {
+    //wird vom MainUIController aufgerufen
+    public void initData(String taskBlockName, UserSession userInstance) {
 
         this.taskBlockName = taskBlockName;
         this.userInstance = userInstance;
@@ -87,7 +85,6 @@ public class TaskBlockController {
             rb.setToggleGroup(toggleGroup_answers);
             radio_container.getChildren().add(rb);
         }
-
     }
 
     public ArrayList<String> loadQuestions(String taskBlockName) {
@@ -136,6 +133,5 @@ public class TaskBlockController {
         Stage stage = (Stage) task_container.getScene().getWindow();
         stage.close();
     }
-
 
 }

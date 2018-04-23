@@ -5,7 +5,7 @@ import sql.SqlLogik;
 
 class Authenticator {
 
-    static UserInstance login(String username, String password) throws Exception {
+    static UserSession login(String username, String password) throws Exception {
 
         SqlLogik sql = new SqlLogik();
 
@@ -13,9 +13,9 @@ class Authenticator {
 
         if(check[0]) {
             if(check[1]) {
-                return new Teacher(sql, username);
+                return new TeacherSession(sql, username);
             } else {
-                return new Student(sql, username);
+                return new StudentSession(sql, username);
             }
 
         } else {

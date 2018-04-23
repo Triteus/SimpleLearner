@@ -7,13 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
-public abstract class UserInstance {
+public abstract class UserSession {
 
 
     SqlLogik sql;
     String username;
+    boolean editAllowed;
 
-    public UserInstance(SqlLogik sql, String username) {
+    public UserSession(SqlLogik sql, String username) {
         this.sql = sql;
         this.username = username;
     }
@@ -59,6 +60,8 @@ public abstract class UserInstance {
     public abstract void fillModule();
 
     public abstract void printResultsAsPdf();
+
+    public abstract void addCategory(String category, String subject) throws SQLException;
 
 
 
