@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller.MainUIController">
+<VBox prefHeight="600.0" prefWidth="900.0" stylesheets="@SimpleLearnerGUI.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller.MainUIController">
   <children>
       <HBox prefHeight="75.0" prefWidth="2000.0">
          <children>

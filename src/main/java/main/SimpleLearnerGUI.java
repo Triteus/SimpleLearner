@@ -397,7 +397,7 @@ public class SimpleLearnerGUI extends Application {
                         borderPane.setRight(btnConfirmCategory);
 
                         Scene tempScene = new Scene(borderPane, 300, 300);
-                        tempScene.getStylesheets().add("style/SimpleLearnerGUI.css");
+                        tempScene.getStylesheets().add("SimpleLearnerGUI.css");
                         tempStage.setScene(tempScene);
                         tempStage.show();
                     } else if (input.equals("Verzeich")) {
@@ -432,7 +432,7 @@ public class SimpleLearnerGUI extends Application {
                         borderPane.setRight(btnConfirmNewQuiz);
 
                         Scene tempScene = new Scene(borderPane, 300, 300);
-                        tempScene.getStylesheets().add("style/SimpleLearnerGUI.css");
+                        tempScene.getStylesheets().add("SimpleLearnerGUI.css");
                         tempStage.setScene(tempScene);
                         tempStage.show();
                     }
@@ -673,7 +673,7 @@ public class SimpleLearnerGUI extends Application {
                             vbStudents.getChildren().add(btnStudentName);
                         }
                         Scene scene = new Scene(scrollPane, 250, 300);
-                        scene.getStylesheets().add("style/SimpleLearnerGUI.css");
+                        scene.getStylesheets().add("SimpleLearnerGUI.css");
                         pdfStage.setScene(scene);
                         pdfStage.show();
                     }
@@ -1040,7 +1040,7 @@ public class SimpleLearnerGUI extends Application {
                     tempPane.setBottom(hBoxButtonsBottom);
 
                     Scene tempScene = new Scene(tempPane, 400, 300);
-                    tempScene.getStylesheets().add("style/SimpleLearnerGUI.css");
+                    tempScene.getStylesheets().add("SimpleLearnerGUI.css");
                     tempStage.setScene(tempScene);
 
                     tempStage.show();
@@ -1147,7 +1147,7 @@ public class SimpleLearnerGUI extends Application {
             borderPane.setMargin(btnAbbrechen, new Insets(10, 10, 10, 20));
             borderPane.setMargin(btnBestaetigen, new Insets(10, 20, 10, 10));
             Scene tempScene = new Scene(borderPane, 300, 80);
-            tempScene.getStylesheets().add("style/SimpleLearnerGUI.css");
+            tempScene.getStylesheets().add("SimpleLearnerGUI.css");
 
             tempStage.setScene(tempScene);
             tempStage.show();
@@ -1205,7 +1205,7 @@ public class SimpleLearnerGUI extends Application {
                 tempPane.setBottom(hBox);
 
                 Scene tempScene = new Scene(tempPane, 350, 250);
-                tempScene.getStylesheets().add("style/SimpleLearnerGUI.css");
+                tempScene.getStylesheets().add("SimpleLearnerGUI.css");
                 tempStage.setScene(tempScene);
                 tempStage.show();
 
@@ -1391,7 +1391,7 @@ public class SimpleLearnerGUI extends Application {
     Scene scene = new Scene(getLoginPane(), 600, 600);
 
     void loadStyleSheets() {
-        scene.getStylesheets().add("style/SimpleLearnerGUI.css");
+        scene.getStylesheets().add("SimpleLearnerGUI.css");
     }
 
     Stage mainStage = new Stage();

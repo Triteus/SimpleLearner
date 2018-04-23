@@ -9,6 +9,7 @@ import sql.SqlLogik;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class StudentSession extends UserSession {
 
@@ -101,4 +102,16 @@ public class StudentSession extends UserSession {
     public void addCategory(String category, String subject) throws SQLException {
 
     }
+
+    @Override
+    public void openTaskBlockCreator(String category) {
+
+    }
+
+    @Override
+    public void createBlock(String block, String category, HashMap<String, ArrayList<String>> tasks) throws SQLException {
+
+    }
+
+
 }

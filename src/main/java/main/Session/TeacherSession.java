@@ -1,9 +1,17 @@
 package main.Session;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import main.Controller.TaskBlockController;
+import main.Controller.TaskBlockEditController;
 import main.Session.UserSession;
 import sql.SqlLogik;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TeacherSession extends UserSession {
 
@@ -55,6 +63,41 @@ public class TeacherSession extends UserSession {
 
     @Override
     public void loadTaskBlock(String blockName) {
+
+    }
+
+    @Override
+    public void openTaskBlockCreator(String category) {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock_new.fxml"));
+
+        Stage stage = new Stage();
+        try {
+            stage.setScene(
+                    new Scene(loader.load())
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        TaskBlockEditController controller = loader.getController();
+        controller.initData(this, category);
+
+        stage.show();
+
+    }
+
+    @Override
+    public void createBlock(String block, String category, HashMap<String, ArrayList<String>> tasks) throws SQLException {
+
+        sql.createBlock(block, this.username, category );
+
+        tasks.forEach((question, answers) -> {
+            //sql.updateAnswers(question, this.username);
+
+        });
+
+
 
     }
 

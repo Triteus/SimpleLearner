@@ -158,12 +158,9 @@ public class MainUIController {
             element_container.getChildren().add(blockAdder);
 
             blockAdder.setOnAction((event) -> {
-                /*try {
-                    userInstance.addCategory("testCategoryCreation", categoryName );
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                */
+
+                    userInstance.openTaskBlockCreator(category);
+
             });
         }
     }

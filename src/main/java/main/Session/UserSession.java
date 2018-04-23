@@ -5,14 +5,14 @@ import sql.SqlLogik;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public abstract class UserSession {
 
-
-    protected SqlLogik sql;
-    protected String username;
-    protected boolean editAllowed = false;
+    SqlLogik sql;
+    String username;
+    boolean editAllowed = false;
 
     public UserSession(SqlLogik sql, String username) {
         this.sql = sql;
@@ -66,7 +66,9 @@ public abstract class UserSession {
 
     public abstract void addCategory(String category, String subject) throws SQLException;
 
+    public abstract void openTaskBlockCreator(String category);
 
+    public abstract void createBlock(String block, String category, HashMap<String, ArrayList<String>> tasks) throws SQLException;
 
 
 
