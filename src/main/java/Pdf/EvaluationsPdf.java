@@ -5,7 +5,6 @@
  */
 package Pdf;
 
-import sql.SqlImplementation;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -17,6 +16,8 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import sql.SqlLogik;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,11 +28,11 @@ import java.sql.SQLException;
  * @author Marcel
  */
 public class EvaluationsPdf {
-    SqlImplementation sql;
+    SqlLogik sql;
     File file;
     Document document;
     
-    public EvaluationsPdf(SqlImplementation sql, File f) {
+    public EvaluationsPdf(SqlLogik sql, File f) {
         this.sql = sql;
         this.file = f;
         this.document = new Document();
@@ -56,7 +57,7 @@ public class EvaluationsPdf {
             //PdfWriter writer = PdfCreator.getInstance(document, new FileOutputStream(System.getProperty("user.home") + "/Desktop/blabla.pdf"));
             document.open();
             
-            sql.loadAbsolvierteAntworten(block, lehrer, vSchueler, nSchueler);
+            sql.loadSolvedAnswers(block, lehrer, vSchueler, nSchueler);
             
             Font chapterFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
             Font chapterFont2 = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
@@ -65,13 +66,13 @@ public class EvaluationsPdf {
             tableTitel.setHorizontalAlignment(Element.ALIGN_LEFT);
             tableTitel.setWidthPercentage(100);
             tableTitel.setSpacingAfter(20f);
-            Chunk chunk1 = new Chunk("Ergebnisse: " + sql.getAnswersStudentsTemp().get(0).getVorname() + " " + sql.getAnswersStudentsTemp().get(0).getNachname(), chapterFont);
+            Chunk chunk1 = new Chunk("Ergebnisse: " + sql.getTempAnswersStudents().get(0).getVorname() + " " + sql.getTempAnswersStudents().get(0).getNachname(), chapterFont);
             Paragraph paragraph1 = new Paragraph(chunk1);
             PdfPCell titleC1 = new PdfPCell(paragraph1);
             Font infoFont = FontFactory.getFont(FontFactory.HELVETICA, 7);
             PdfPCell titleC2 = new PdfPCell(new Paragraph("Aufgabenblock: " + block, chapterFont2));
-            PdfPCell titleC3 = new PdfPCell(new Paragraph("in Kategorie: " + sql.getAnswersStudentsTemp().get(0).getKategorieName(), chapterFont3));
-            PdfPCell titleC4 = new PdfPCell(new Paragraph("im Fach: " + sql.getAnswersStudentsTemp().get(0).getFachKuerzel() + " - " + sql.getAnswersStudentsTemp().get(0).getFachName(), chapterFont3));
+            PdfPCell titleC3 = new PdfPCell(new Paragraph("in Kategorie: " + sql.getTempAnswersStudents().get(0).getKategorieName(), chapterFont3));
+            PdfPCell titleC4 = new PdfPCell(new Paragraph("im Fach: " + sql.getTempAnswersStudents().get(0).getFachKuerzel() + " - " + sql.getTempAnswersStudents().get(0).getFachName(), chapterFont3));
 
             titleC1.setBorderColor(BaseColor.WHITE);
             titleC2.setBorderColor(BaseColor.WHITE);
@@ -83,7 +84,7 @@ public class EvaluationsPdf {
             tableTitel.addCell(titleC4);
             document.add(tableTitel);
             
-            document.add(new Paragraph("Zuständiger Lehrer: " + sql.getAnswersStudentsTemp().get(0).getZustLehrerVorname() + " " + sql.getAnswersStudentsTemp().get(0).getZustLehrerNachname()));
+            document.add(new Paragraph("Zuständiger Lehrer: " + sql.getTempAnswersStudents().get(0).getZustLehrerVorname() + " " + sql.getTempAnswersStudents().get(0).getZustLehrerNachname()));
             
             float[] est = {3, 3, 3};
             PdfPTable tableErgebnisse = new PdfPTable(est);
@@ -104,7 +105,7 @@ public class EvaluationsPdf {
             tableErgebnisse.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
             tableErgebnisse.getDefaultCell().setPadding(5);
             
-            for(AntwortPdfObjekt apo: sql.getAnswersStudentsTemp()){
+            for(AntwortPdfObjekt apo: sql.getTempAnswersStudents()){
                 tableErgebnisse.addCell(apo.getFrage());
                 if(apo.getAntwortS().equals(apo.getRichtigeAntwort())){
                     tableErgebnisse.getDefaultCell().setBackgroundColor(new BaseColor(0x00,0xFF, 0x7F)); //Hexcode
