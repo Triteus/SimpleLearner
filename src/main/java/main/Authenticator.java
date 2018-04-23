@@ -13,9 +13,9 @@ class Authenticator {
 
         if(check[0]) {
             if(check[1]) {
-                return new Teacher(sql);
+                return new Teacher(sql, username);
             } else {
-                return new Student(sql);
+                return new Student(sql, username);
             }
 
         } else {

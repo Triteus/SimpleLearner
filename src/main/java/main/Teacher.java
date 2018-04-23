@@ -1,17 +1,13 @@
 package main;
 
-import javafx.scene.control.TextField;
-
 import sql.SqlLogik;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
 public class Teacher extends UserInstance {
 
-
-    public Teacher(SqlLogik sql) {
-        super(sql);
+    public Teacher(SqlLogik sql, String username) {
+        super(sql, username);
     }
 
     @Override
@@ -53,6 +49,11 @@ public class Teacher extends UserInstance {
             }
         }
         return sql.getTaskSections();
+    }
+
+    @Override
+    public void loadTaskBlock(String blockName) {
+
     }
 
     @Override

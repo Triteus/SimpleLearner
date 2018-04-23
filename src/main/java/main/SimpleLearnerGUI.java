@@ -795,20 +795,6 @@ public class SimpleLearnerGUI extends Application {
             btnCategory.setMinWidth(listContainer.getWidth()/*-btnLöschen.getPrefWidth()*/);
             setBtnName(mainStage);
 
-            //btnLöschen = new Button("Loeschen");
-            //btnLöschen.setStyle("-fx-background-color:rgb(255,50,50)");
-            //btnLöschen.setPrefWidth(100);
-
-            /*
-            btnLöschen.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent e){
-                    //
-                    
-                    //
-                }
-            });
-             */
         }
 
         String getBtnName() {
@@ -1289,17 +1275,6 @@ public class SimpleLearnerGUI extends Application {
                         navigator.add(btnBeenden, 0, 1);
                     }
                 }
-                /*else {
-                    Stage stage = new Stage();
-                    Label labelDirectory = new Label("Sie haben das Quiz vollständig bearbeitet.");
-                    Button btnStudentName = new Button("Zurück zu den Aufgaben");
-                    VBox vbStudents = new VBox();
-                    vbStudents.getChildren().addAll(labelDirectory, btnStudentName);
-                    Scene scene = new Scene(vbStudents);
-                    stage.setScene(scene);
-                    stage.show();
-                }*/
-
             }
         });
     }

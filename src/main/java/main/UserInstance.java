@@ -1,8 +1,6 @@
 package main;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+
 import sql.SqlLogik;
 
 import java.sql.SQLException;
@@ -15,9 +13,9 @@ public abstract class UserInstance {
     SqlLogik sql;
     String username;
 
-    public UserInstance(SqlLogik sql) {
+    public UserInstance(SqlLogik sql, String username) {
         this.sql = sql;
-        this.username = sql.getCurrentUser();
+        this.username = username;
     }
 
     public String getUsername() {
@@ -28,19 +26,12 @@ public abstract class UserInstance {
     public ArrayList<String> loadCategories(String subject, String filterText) throws Exception {
 
         if (filterText.isEmpty()) {
-            try {
+
                 sql.loadCategories(subject);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-                throw exc;
-            }
+
         } else {
-            try {
+
                 sql.loadFilteredCategories(subject, filterText);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-                throw exc;
-            }
         }
 
         return sql.getCategories();
@@ -50,6 +41,18 @@ public abstract class UserInstance {
     public abstract ArrayList<String> loadSubjects(String filterText) throws Exception;
 
     public abstract ArrayList<String> loadTaskBlocks(String category, String filterText) throws Exception;
+
+    public abstract void loadTaskBlock(String blockName);
+
+    public ArrayList<String>loadQuestions(String block) throws SQLException {
+        sql.loadQuestions(block);
+        return sql.getQuestions();
+    }
+
+    public ArrayList<String> loadAnswers(String block, String question) throws SQLException {
+        sql.loadAnswers(block, question);
+        return sql.getAnswersTemp();
+    }
 
     public abstract void fillDirectory();
 

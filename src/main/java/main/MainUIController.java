@@ -19,9 +19,34 @@ import java.util.ArrayList;
 
 public class MainUIController {
 
+    @FXML
+    private TextField tf_username;
+
+    @FXML
+    private Button btn_logoff;
+
+    @FXML
+    private ToolBar breadcrumbBar;
+
+    @FXML
+    private Button btn_subjectRef;
+
+    @FXML
+    private VBox element_container;
+
+    @FXML
+    void onSubmitClick(ActionEvent event) {
+
+        loadSubjects();
+
+    }
+
+
+
     private UserInstance userInstance;
 
 
+    //gets called from the LoginController
     void initData(UserInstance instance) {
 
         this.userInstance = instance;
@@ -110,50 +135,15 @@ public class MainUIController {
             element_container.getChildren().add(elButton);
 
         }
-
     }
 
 
     private void loadTaskBlock(String blockName) {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock.fxml"));
-
-        Stage stage = new Stage();
-        try {
-            stage.setScene(
-                    new Scene(loader.load())
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        TaskBlockController controller = loader.getController();
-        controller.initData(blockName);
-
-        stage.show();
+        userInstance.loadTaskBlock(blockName);
 
     }
 
-    @FXML
-    private TextField tf_username;
 
-    @FXML
-    private Button btn_logoff;
-
-    @FXML
-    private ToolBar breadcrumbBar;
-
-    @FXML
-    private Button btn_subjectRef;
-
-    @FXML
-    private VBox element_container;
-
-    @FXML
-    void onSubmitClick(ActionEvent event) {
-
-        loadSubjects();
-
-    }
 
 }
