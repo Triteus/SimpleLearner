@@ -4,10 +4,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.swing.plaf.nimbus.State;
+import java.sql.*;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,10 +34,6 @@ class SqlLogikTest {
     static void finish() throws SQLException {
         Statement statement = connection.createStatement();
         statement.execute("DELETE FROM schueler WHERE sid = 'test'");
-    }
-
-    @Test
-    void startBlock() {
     }
 
     @Test
@@ -80,7 +74,13 @@ class SqlLogikTest {
     }
 
     @Test
-    void createCategory() {
+    void createCategory1() throws SQLException {
+        sqlLogik.createCategory("Analysis", "Mathematik", connection);
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet =  statement.executeQuery("SELECT COUNT(*) FROM kategorie WHERE kid='Analysis'");
+
+        assertEquals(1, resultSet.getInt("COUNT(*)"));
     }
 
     @Test
