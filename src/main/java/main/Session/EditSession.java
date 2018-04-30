@@ -3,7 +3,7 @@ package main.Session;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import main.Controller.TaskBlockController;
+import main.Controller.TaskBlockEditController;
 import sql.Answer;
 import sql.SqlLogik;
 
@@ -12,12 +12,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class StudentSession extends UserSession {
+public abstract class EditSession extends UserSession {
 
-
-    public StudentSession(SqlLogik sql, String username) {
+    public EditSession(SqlLogik sql, String username) {
         super(sql, username);
-        editAllowed = false;
+        editAllowed = true;
     }
 
     @Override
@@ -25,13 +24,13 @@ public class StudentSession extends UserSession {
 
         if (filter.isEmpty()) {
             try {
-                sql.loadSubjects();
+                sql.loadSubjects(username);
             } catch (SQLException exc) {
                 System.out.println(exc.getMessage());
             }
         } else {
             try {
-                sql.loadFilteredSubjects(filter);
+                sql.loadFilteredSubjects(username, filter);
             } catch (SQLException exc) {
                 System.out.println(exc.getMessage());
             }
@@ -43,29 +42,33 @@ public class StudentSession extends UserSession {
 
     @Override
     public ArrayList<String> loadTaskBlocks(String category, String filter) throws Exception {
-
         if (filter.isEmpty()) {
             try {
-                sql.loadStudentSections(category, username);
+                sql.loadTeacherSections(category, username);
             } catch (SQLException exc) {
                 System.out.println(exc.getMessage());
+                throw exc;
             }
         } else {
             try {
-                sql.loadFilteredStudentSections(category, username, filter);
+                sql.loadFilteredTeacherSections(category, username, filter);
             } catch (SQLException exc) {
                 System.out.println(exc.getMessage());
+                throw exc;
             }
         }
-
         return sql.getTaskSections();
-
     }
 
     @Override
     public void loadTaskBlock(String blockName) {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock.fxml"));
+    }
+
+    @Override
+    public void openTaskBlockCreator(String category) {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock_new.fxml"));
 
         Stage stage = new Stage();
         try {
@@ -76,10 +79,17 @@ public class StudentSession extends UserSession {
             e.printStackTrace();
         }
 
-        TaskBlockController controller = loader.getController();
-        controller.initData(blockName, this);
+        TaskBlockEditController controller = loader.getController();
+        controller.initData(this, category);
 
         stage.show();
+
+    }
+
+    @Override
+    public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
+
+        sql.createBlock(block, this.username, category, tasks);
 
     }
 
@@ -87,32 +97,7 @@ public class StudentSession extends UserSession {
     @Override
     public void addCategory(String category, String subject) throws SQLException {
 
+        sql.createCategory(category, subject);
     }
-
-    @Override
-    public void openTaskBlockCreator(String category) {
-
-    }
-
-    @Override
-    public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
-
-
-    }
-
-    @Override
-    public void startBlock(String block) throws SQLException {
-
-        sql.startBlock(block, this.username);
-
-    }
-
-    @Override
-    public void checkAnswer(String block, String question, String answer) throws SQLException {
-
-        sql.checkAnswer(block, this.username, question, answer);
-
-    }
-
 
 }

@@ -54,6 +54,7 @@ public class TaskBlockController {
     private String currentQuestion;
     private ArrayList<String> answersForCurrentQuestion;
     private UserSession userInstance;
+    private boolean answerSelected;
 
 
     //wird vom MainUIController aufgerufen
@@ -62,11 +63,24 @@ public class TaskBlockController {
         this.taskBlockName = taskBlockName;
         this.userInstance = userInstance;
 
+
+        try {
+            userInstance.startBlock(taskBlockName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        this.answerSelected = false;
+
+        toggleGroup_answers = new ToggleGroup();
+
         label_taskblock.setText(taskBlockName);
 
+        //fetch initial data from database
         questions = loadQuestions(taskBlockName);
-
-        getNextTask();
+        currentQuestion = questions.remove(0);
+        answersForCurrentQuestion = loadAnswersForCurrentQuestion();
 
         displayTask();
 
@@ -114,7 +128,20 @@ public class TaskBlockController {
 
     public boolean getNextTask() {
 
+        //no answer selected -> keep current task
+        if(toggleGroup_answers.getSelectedToggle() == null) {
+            return true;
+        }
+
         if(!questions.isEmpty()) {
+
+                String answer = ((RadioButton)toggleGroup_answers.getSelectedToggle()).getText();
+
+            try {
+                userInstance.checkAnswer(taskBlockName, currentQuestion, answer);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             currentQuestion = getNextQuestion();
             answersForCurrentQuestion = loadAnswersForCurrentQuestion();
@@ -123,6 +150,7 @@ public class TaskBlockController {
         }
 
         return false;
+
     }
 
      private String getNextQuestion() {

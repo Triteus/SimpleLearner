@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -805,18 +806,18 @@ public class SqlLogik {
      * @throws SQLException
      */
 
-    public void createBlock(String block, String lehrer, String kategorie) throws SQLException {
+    public void initBlock(String block, String lehrer, String kategorie) throws SQLException {
 
         try {
             Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-            createBlock(block, lehrer, kategorie, myConn);
+            initBlock(block, lehrer, kategorie, myConn);
         } catch (SQLException ex) {
             ex.printStackTrace();
             throw ex;
         }
     }
 
-    void createBlock(String block, String lehrer, String kategorie, Connection myConn) throws SQLException {
+    void initBlock(String block, String lehrer, String kategorie, Connection myConn) throws SQLException {
 
         String createString = "insert into block(bid, lehrer, kategorie) values(?, ?, ?);";
         try {
@@ -885,6 +886,51 @@ public class SqlLogik {
                     createAnswer(tf.getText(), false, block, frage);
                 }
             }
+        }
+    }
+
+
+    public void createBlock(String block, String teacher,  String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            createBlock(block, teacher, category, tasks, myConn);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
+    }
+
+
+    void createBlock(String block, String teacher,  String category, HashMap<String, ArrayList<Answer>> tasks, Connection myConn) throws SQLException {
+
+        //create new entry in table 'block'
+        initBlock(block, teacher, category);
+
+        tasks.forEach((question, answers) -> {
+
+            try {
+                createTask(question, answers, block, myConn );
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
+
+    }
+
+    private void createTask(String question, ArrayList<Answer> answers, String block, Connection myConn) throws SQLException {
+
+        String insertTaskQuery = "insert into aufgabe(block, frage) values(?, ?)";
+        PreparedStatement stmtNewTask = myConn.prepareStatement(insertTaskQuery);
+
+        stmtNewTask.setString(1, block);
+        stmtNewTask.setString(2, question);
+
+        stmtNewTask.executeUpdate();
+
+        for(Answer answer : answers) {
+            createAnswer(answer.answerText, answer.isRight, block, question, myConn);
         }
     }
 

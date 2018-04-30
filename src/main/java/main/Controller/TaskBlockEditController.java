@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import main.Session.UserSession;
+import sql.Answer;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -43,7 +45,7 @@ public class TaskBlockEditController {
 
 
     private ToggleGroup toggleAnswer;
-    private HashMap<String, ArrayList<String>> tasks;
+    private HashMap<String, ArrayList<Answer>> tasks;
 
     private UserSession userSession;
     private String category;
@@ -72,6 +74,13 @@ public class TaskBlockEditController {
     @FXML
     void onBlockSaveBtnClicked(ActionEvent event) {
 
+       String block = taskBlockTextField.getText();
+
+        try {
+            userSession.createBlock(block, category, tasks);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -79,15 +88,31 @@ public class TaskBlockEditController {
     void onSubmitButtonClicked(ActionEvent event) {
 
        String question = questionTextarea.getText();
-       ArrayList<String> answers = new ArrayList<>();
+       ArrayList<Answer> answers = new ArrayList<>();
 
        radioContainer.getChildren()
                .forEach(( radioButton) -> {
            RadioButton btn = (RadioButton) radioButton;
-            answers.add(btn.getText());
+           String answerText = btn.getText();
+           boolean isRight = btn.isSelected();
+
+            answers.add(new Answer(answerText, isRight ));
        });
 
        tasks.put(question, answers);
+
+       resetForms();
+
+    }
+
+    /*
+    Clear questionText and all answers
+     */
+
+    private void resetForms() {
+
+       questionTextarea.setText("");
+       radioContainer.getChildren().clear();
 
     }
 

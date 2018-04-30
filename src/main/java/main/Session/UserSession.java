@@ -1,12 +1,19 @@
 package main.Session;
 
 
+import sql.Answer;
 import sql.SqlLogik;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
+/*
+
+    Can be refactored even further by applying the Strategy Pattern
+
+ */
 
 public abstract class UserSession {
 
@@ -58,18 +65,14 @@ public abstract class UserSession {
         return sql.getAnswersTemp();
     }
 
-    public abstract void fillDirectory();
-
-    public abstract void fillModule();
-
-    public abstract void printResultsAsPdf();
-
     public abstract void addCategory(String category, String subject) throws SQLException;
 
     public abstract void openTaskBlockCreator(String category);
 
-    public abstract void createBlock(String block, String category, HashMap<String, ArrayList<String>> tasks) throws SQLException;
+    public abstract void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException;
 
+    public abstract void startBlock(String block) throws SQLException;
 
+    public abstract void checkAnswer(String block, String question, String answer) throws SQLException;
 
 }
