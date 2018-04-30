@@ -34,6 +34,7 @@ class SqlLogikTest {
     static void finish() throws SQLException {
         Statement statement = connection.createStatement();
         statement.execute("DELETE FROM schueler WHERE sid = 'test'");
+        statement.execute("DELETE FROM kategorie WHERE kid='Analysis'");
     }
 
     @Test
