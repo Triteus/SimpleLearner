@@ -80,6 +80,7 @@ class SqlLogikTest {
         Statement statement = connection.createStatement();
         ResultSet resultSet =  statement.executeQuery("SELECT COUNT(*) FROM kategorie WHERE kid='Analysis'");
 
+        resultSet.next();
         assertEquals(1, resultSet.getInt("COUNT(*)"));
     }
 
