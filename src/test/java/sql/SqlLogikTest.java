@@ -49,7 +49,7 @@ class SqlLogikTest {
     @Test
     void checkLogin1() throws SQLException {
         boolean[] checkedLogin = sqlLogik.checkLogin("test", "password123", connection);
-        assertFalse(checkedLogin[0]);
+        assertTrue(checkedLogin[0]);
         assertFalse(checkedLogin[1]);
     }
 
