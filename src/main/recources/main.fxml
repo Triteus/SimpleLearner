@@ -13,9 +13,9 @@
   <children>
       <HBox prefHeight="75.0" prefWidth="2000.0">
          <children>
-            <BorderPane prefHeight="75.0" prefWidth="2000.0">
+            <BorderPane id="mainTopMenu" prefHeight="75.0" prefWidth="2000.0">
                <right>
-                  <Button fx:id="btn_logoff" mnemonicParsing="false" onAction="#onLogoffClick" text="Abmelden" BorderPane.alignment="CENTER">
+                  <Button id="btnLogout" fx:id="btn_logoff" mnemonicParsing="false" onAction="#onLogoffClick" styleClass="btn" text="Abmelden" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets right="50.0" />
                      </BorderPane.margin>
@@ -24,7 +24,7 @@
                <left>
                   <HBox alignment="CENTER" prefHeight="65.0" prefWidth="302.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Label text="Angemeldet als: " />
+                        <Label text="Angemeldet als: " textFill="WHITE" />
                         <TextField fx:id="tf_username" disable="true" editable="false" />
                      </children>
                   </HBox>

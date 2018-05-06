@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox stylesheets="@SimpleLearnerGUI.css" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller.LoginController">
+<VBox prefHeight="400.0" prefWidth="640.0" stylesheets="@SimpleLearnerGUI.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller.LoginController">
   <children>
       <GridPane alignment="CENTER" prefHeight="2000.0" prefWidth="2000.0">
         <columnConstraints>
@@ -25,16 +25,16 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="330.0" style="-fx-spacing: 10px; -fx-background-color: white; -fx-border-color: black; -fx-padding: 50px;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <VBox id="loginContainer" alignment="CENTER" prefHeight="200.0" prefWidth="330.0" style="-fx-spacing: 10px; -fx-background-color: white; -fx-border-color: black; -fx-padding: 50px;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Label text="Anmeldung">
+                  <Label id="loginLabel" text="Anmeldung">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <Label text="Name">
+                        <Label id="nameLabel" text="Name">
                            <VBox.margin>
                               <Insets bottom="5.0" />
                            </VBox.margin>
@@ -44,7 +44,7 @@
                   </VBox>
                   <VBox layoutX="31.0" layoutY="30.0" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <Label text="Passwort">
+                        <Label id="passLabel" text="Passwort">
                            <VBox.margin>
                               <Insets bottom="5.0" />
                            </VBox.margin>
@@ -52,7 +52,7 @@
                         <PasswordField fx:id="tf_password" />
                      </children>
                   </VBox>
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLoginClick" style="-fx-background-color: green;" text="Einloggen" textFill="WHITE" />
+                  <Button id="btnLogin" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLoginClick" style="-fx-background-color: green;" text="Einloggen" textFill="WHITE" />
                </children>
             </VBox>
          </children>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -11,9 +12,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="task_container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@SimpleLearnerGUI.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller.TaskBlockEditController">
+<VBox fx:id="task_container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@SimpleLearnerGUI.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <HBox id="newTaskTextHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
             <TextField fx:id="taskBlockTextField" alignment="CENTER" prefHeight="26.0" prefWidth="795.0" promptText="Hier Namen des Aufgabenblocks eintragen">
                <font>
@@ -24,24 +25,24 @@
       </HBox>
     <SplitPane dividerPositions="0.5" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <items>
-            <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
+            <VBox id="questionPane" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
                <children>
                   <Label fx:id="label_question" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Frage">
                      <font>
                         <Font size="16.0" />
                      </font></Label>
                   <Region prefHeight="70.0" prefWidth="446.0" />
-                  <TextArea fx:id="questionTextarea" prefHeight="110.0" prefWidth="446.0" promptText="Tragen Sie hier die Frage ein" />
+                  <TextArea id="taskText" fx:id="questionTextarea" prefHeight="110.0" prefWidth="446.0" promptText="Tragen Sie hier die Frage ein" />
                </children>
             </VBox>
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+            <VBox id="answerPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                <children>
                   <Label fx:id="label_answer" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Antwort">
                      <font>
                         <Font size="16.0" />
                      </font></Label>
                   <Region prefHeight="70.0" prefWidth="446.0" />
-                  <HBox alignment="CENTER" prefHeight="62.0" prefWidth="446.0">
+                  <HBox id="listContainer" alignment="CENTER" prefHeight="62.0" prefWidth="446.0">
                      <children>
                         <TextField fx:id="answerTextfield" prefHeight="26.0" prefWidth="286.0" promptText="Tragen Sie hier die Antwort ein" />
                         <Button fx:id="addAnswerButton" mnemonicParsing="false" onAction="#onAddAnswerBtnClicked" text="+">
@@ -56,13 +57,21 @@
             </VBox>
          </items>
     </SplitPane>
-    <HBox id="HBox" alignment="CENTER" prefHeight="154.0" prefWidth="900.0" spacing="5.0" VBox.vgrow="NEVER">
+    <HBox id="HBox" alignment="CENTER" prefHeight="154.0" prefWidth="2000.0" spacing="5.0">
       <padding>
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
       </padding>
          <children>
-            <Button fx:id="saveTaskButton" mnemonicParsing="false" onAction="#onSubmitButtonClicked" text="Aufgabe speichern" />
-            <Button fx:id="finalSaveButton" mnemonicParsing="false" onAction="#onBlockSaveBtnClicked" text="Erstellung abschließen" />
+            <Button fx:id="saveTaskButton" mnemonicParsing="false" onAction="#onSubmitButtonClicked" prefWidth="175.0" text="Aufgabe speichern">
+               <styleClass>
+                  <String fx:value="okButton" />
+                  <String fx:value="btn" />
+               </styleClass></Button>
+            <Button fx:id="finalSaveButton" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBlockSaveBtnClicked" prefHeight="70.0" prefWidth="500.0" text="Erstellung abschließen">
+               <styleClass>
+                  <String fx:value="okButton" />
+                  <String fx:value="btn" />
+               </styleClass></Button>
          </children>
     </HBox>
   </children>

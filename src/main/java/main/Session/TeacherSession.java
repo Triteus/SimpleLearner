@@ -1,16 +1,6 @@
 package main.Session;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import main.Controller.TaskBlockEditController;
-import sql.Answer;
 import sql.SqlLogik;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class TeacherSession extends EditSession {
 

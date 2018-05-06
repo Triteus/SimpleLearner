@@ -19,8 +19,8 @@ class SqlLogikTest {
     static void initialize() throws SQLException {
         String dbURL = "jdbc:mysql://localhost:3306/simple_learner_test?useSSL=true";
         Properties userInfo = new Properties();
-        userInfo.put("user", "simple-learner-test");
-        userInfo.put("password", "SimpleLearner");
+        userInfo.put("user", "root");
+        userInfo.put("password", "test");
         connection = DriverManager.getConnection(dbURL, userInfo);
 
         sqlLogik = new SqlLogik();

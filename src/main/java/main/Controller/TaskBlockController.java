@@ -13,65 +13,61 @@ import java.util.ArrayList;
 public class TaskBlockController {
 
     @FXML
-    private VBox task_container;
+    private VBox taskContainer;
 
     @FXML
     private Label label_taskblock;
 
     @FXML
-    private Label label_question;
+    private Label questionLabel;
 
     @FXML
-    private TextArea textarea_question;
+    private TextArea questionTextarea;
 
     @FXML
-    private Label label_answer;
+    private Label answerLabel;
 
     @FXML
-    private VBox radio_container;
+    private VBox radioContainer;
 
     @FXML
     private ToggleGroup toggleGroup_answers;
 
     @FXML
-    private Button button_next;
+    private Button nextTaskButton;
 
 
     @FXML
     void onSubmitClick(ActionEvent event) {
 
         if(getNextTask()) {
+
             displayTask();
 
         } else {
-            closeTaskStage();
-        }
 
+            closeTaskStage();
+
+        }
     }
 
-    private String taskBlockName;
-    private ArrayList<String> questions;
-    private String currentQuestion;
-    private ArrayList<String> answersForCurrentQuestion;
-    private UserSession userInstance;
-    private boolean answerSelected;
-
+    String taskBlockName;
+    ArrayList<String> questions;
+    String currentQuestion;
+    ArrayList<String> answersForCurrentQuestion;
+     UserSession userSession;
 
     //wird vom MainUIController aufgerufen
     public void initData(String taskBlockName, UserSession userInstance) {
 
         this.taskBlockName = taskBlockName;
-        this.userInstance = userInstance;
-
+        this.userSession = userInstance;
 
         try {
             userInstance.startBlock(taskBlockName);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
-        this.answerSelected = false;
 
         toggleGroup_answers = new ToggleGroup();
 
@@ -88,17 +84,17 @@ public class TaskBlockController {
 
     public void displayTask() {
 
-        textarea_question.setText(currentQuestion);
+        questionTextarea.setText(currentQuestion);
 
         toggleGroup_answers = new ToggleGroup();
 
-        radio_container.getChildren().clear();
+        radioContainer.getChildren().clear();
 
         for(String answer : answersForCurrentQuestion) {
             System.out.println(answer);
             RadioButton rb = new RadioButton(answer);
             rb.setToggleGroup(toggleGroup_answers);
-            radio_container.getChildren().add(rb);
+            radioContainer.getChildren().add(rb);
         }
     }
 
@@ -106,7 +102,7 @@ public class TaskBlockController {
 
         ArrayList<String> questions = null;
         try {
-            questions = userInstance.loadQuestions(taskBlockName );
+            questions = userSession.loadQuestions(taskBlockName );
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -118,7 +114,7 @@ public class TaskBlockController {
 
         ArrayList<String> answers = null;
         try {
-            answers = userInstance.loadAnswers(taskBlockName, currentQuestion );
+            answers = userSession.loadAnswers(taskBlockName, currentQuestion );
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -138,7 +134,7 @@ public class TaskBlockController {
                 String answer = ((RadioButton)toggleGroup_answers.getSelectedToggle()).getText();
 
             try {
-                userInstance.checkAnswer(taskBlockName, currentQuestion, answer);
+                userSession.checkAnswer(taskBlockName, currentQuestion, answer);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -159,7 +155,7 @@ public class TaskBlockController {
     }
 
     public void closeTaskStage() {
-        Stage stage = (Stage) task_container.getScene().getWindow();
+        Stage stage = (Stage) taskContainer.getScene().getWindow();
         stage.close();
     }
 

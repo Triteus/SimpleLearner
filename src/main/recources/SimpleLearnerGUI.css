@@ -1,6 +1,4 @@
 
-
-
 #btnLogin{
     -fx-background-color: #009900;
     -fx-background-radius: 3,2,1;
@@ -46,12 +44,12 @@
 .VerzeichnisButton{
     -fx-background-color: rgb(255,255,255);
 }
-#btnNewElement{
+.btnNewElement{
     -fx-background-color: #f2f2f2;
     -fx-font-size: 16px;
     -fx-text-fill:#008000;
 }
-#btnNewElement:hover{
+.btnNewElement:hover{
     -fx-font-weight: bold;
 }
 #loginContainer{
@@ -131,7 +129,7 @@
 .cancelButton, .okButton{
 -fx-font-size: 14px;
     -fx-pref-height: 30px;
-    -fx-pref-width: 120px;
+    -fx-pref-width: 200px;
     -fx-text-fill:#595959;
 }
 .okButton:hover{

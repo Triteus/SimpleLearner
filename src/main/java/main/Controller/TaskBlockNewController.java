@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TaskBlockEditController extends TaskBlockController {
+public class TaskBlockNewController {
 
     @FXML
     private VBox task_container;
@@ -48,39 +48,17 @@ public class TaskBlockEditController extends TaskBlockController {
     private ToggleGroup toggleAnswer;
     private HashMap<String, ArrayList<Answer>> tasks;
 
-
+    private UserSession userSession;
     private String category;
-    private String block;
 
 
     //wird von MainUIController aufgerufen
-    public void initData(UserSession userSession, String category, String existingBlock) {
-
-        toggleAnswer = new ToggleGroup();
-        tasks = new HashMap<>();
-        this.userSession = userSession;
-        this.category = category;
-        this.block = existingBlock;
-
-        this.taskBlockTextField.setText( existingBlock);
-
-        //fetch initial data from database
-        questions = loadQuestions(existingBlock);
-        currentQuestion = questions.remove(0);
-        answersForCurrentQuestion = loadAnswersForCurrentQuestion();
-
-        displayTask();
-
-    }
-
-
-
-    void loadNextTask() {
-
-
-
-    }
-
+   public void initData(UserSession userSession, String category, String existingBlock) {
+       toggleAnswer = new ToggleGroup();
+       tasks = new HashMap<>();
+       this.userSession = userSession;
+       this.category = category;
+   }
 
     @FXML
     void onAddAnswerBtnClicked(ActionEvent event) {
@@ -117,24 +95,24 @@ public class TaskBlockEditController extends TaskBlockController {
     @FXML
     void onSubmitButtonClicked(ActionEvent event) {
 
-        if(formsFilled() && toggleAnswer.getSelectedToggle() != null) {
+       if(formsFilled() && toggleAnswer.getSelectedToggle() != null) {
 
-            String question = questionTextarea.getText();
-            ArrayList<Answer> answers = new ArrayList<>();
+           String question = questionTextarea.getText();
+           ArrayList<Answer> answers = new ArrayList<>();
 
-            radioContainer.getChildren()
-                    .forEach((radioButton) -> {
-                        RadioButton btn = (RadioButton) radioButton;
-                        String answerText = btn.getText();
-                        boolean isRight = btn.isSelected();
+           radioContainer.getChildren()
+                   .forEach((radioButton) -> {
+                       RadioButton btn = (RadioButton) radioButton;
+                       String answerText = btn.getText();
+                       boolean isRight = btn.isSelected();
 
-                        answers.add(new Answer(answerText, isRight));
-                    });
+                       answers.add(new Answer(answerText, isRight));
+                   });
 
-            tasks.put(question, answers);
+           tasks.put(question, answers);
 
-            resetForms();
-        }
+           resetForms();
+       }
 
     }
 
@@ -144,10 +122,10 @@ public class TaskBlockEditController extends TaskBlockController {
 
     private void resetForms() {
 
-        questionTextarea.setText("");
-        radioContainer.getChildren().clear();
-        answerTextfield.setText("");
-        toggleAnswer = new ToggleGroup();
+       questionTextarea.setText("");
+       radioContainer.getChildren().clear();
+       answerTextfield.setText("");
+       toggleAnswer = new ToggleGroup();
 
     }
 

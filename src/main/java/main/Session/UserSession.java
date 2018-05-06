@@ -53,7 +53,7 @@ public abstract class UserSession {
 
     public abstract ArrayList<String> loadTaskBlocks(String category, String filterText) throws Exception;
 
-    public abstract void loadTaskBlock(String blockName);
+    public abstract void loadTaskBlock(String blockName, String category);
 
     public ArrayList<String>loadQuestions(String block) throws SQLException {
         sql.loadQuestions(block);
@@ -70,6 +70,8 @@ public abstract class UserSession {
     public abstract void openTaskBlockCreator(String category);
 
     public abstract void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException;
+
+    public abstract void updateBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException;
 
     public abstract void startBlock(String block) throws SQLException;
 

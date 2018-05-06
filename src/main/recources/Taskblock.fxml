@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -10,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="task_container" stylesheets="@SimpleLearnerGUI.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller.TaskBlockController">
+<VBox fx:id="taskContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@SimpleLearnerGUI.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller.TaskBlockController">
   <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
@@ -23,18 +24,18 @@
       </HBox>
     <SplitPane dividerPositions="0.5" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <items>
-            <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
+            <VBox id="createTaskPane" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label fx:id="label_question" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Frage" />
-                  <Region prefHeight="70.0" prefWidth="446.0" />
-                  <TextArea fx:id="textarea_question" editable="false" prefHeight="0.0" prefWidth="446.0" text="Was ist 1 + 1 ?" />
+                  <Label id="taskPane" fx:id="questionLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Frage" />
+                  <Region id="createTaskPane" prefHeight="70.0" prefWidth="446.0" />
+                  <TextArea id="taskText" fx:id="questionTextarea" editable="false" prefHeight="0.0" prefWidth="446.0" text="Was ist 1 + 1 ?" />
                </children>
             </VBox>
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+            <VBox id="answerPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label fx:id="label_answer" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Antwort" />
+                  <Label id="answerPane" fx:id="answerLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Antwort" />
                   <Region prefHeight="70.0" prefWidth="446.0" />
-                  <VBox fx:id="radio_container" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                  <VBox id="listContainer" fx:id="radioContainer" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
 
                      </children>
@@ -48,7 +49,11 @@
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
       </padding>
          <children>
-            <Button fx:id="button_next" mnemonicParsing="false" onAction="#onSubmitClick" text="Nächste Aufgabe" />
+            <Button fx:id="nextTaskButton" mnemonicParsing="false" onAction="#onSubmitClick" text="Nächste Aufgabe">
+               <styleClass>
+                  <String fx:value="btn" />
+                  <String fx:value="okButton" />
+               </styleClass></Button>
          </children>
     </HBox>
   </children>

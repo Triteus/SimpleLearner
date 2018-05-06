@@ -15,6 +15,7 @@ public class Authenticator {
         boolean [] check = sql.checkLogin(username, password);
 
         if(check[0]) {
+
             if(check[1]) {
                 return new TeacherSession(sql, username);
             } else {

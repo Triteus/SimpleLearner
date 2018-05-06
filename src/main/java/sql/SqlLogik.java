@@ -158,7 +158,7 @@ public class SqlLogik {
             rsSuche = stmtSuche.executeQuery(suchString);
             while (rsSuche.next()) {
                 if (rsSuche.getString("block").equals(sectionName)) {
-                    if (rsSuche.getString("student").equals(aStudent)) {
+                    if (rsSuche.getString("schueler").equals(aStudent)) {
                         confirm = false;
                     }
 

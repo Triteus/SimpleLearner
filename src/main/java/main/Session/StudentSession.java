@@ -14,7 +14,6 @@ import java.util.HashMap;
 
 public class StudentSession extends UserSession {
 
-
     public StudentSession(SqlLogik sql, String username) {
         super(sql, username);
         editAllowed = false;
@@ -63,7 +62,7 @@ public class StudentSession extends UserSession {
     }
 
     @Override
-    public void loadTaskBlock(String blockName) {
+    public void loadTaskBlock(String blockName, String category) {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock.fxml"));
 
@@ -83,7 +82,6 @@ public class StudentSession extends UserSession {
 
     }
 
-
     @Override
     public void addCategory(String category, String subject) throws SQLException {
 
@@ -97,22 +95,25 @@ public class StudentSession extends UserSession {
     @Override
     public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
 
+    }
+
+    @Override
+    public void updateBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
 
     }
 
     @Override
     public void startBlock(String block) throws SQLException {
 
-        sql.startBlock(block, this.username);
+        sql.startBlock(block, username);
 
     }
 
     @Override
     public void checkAnswer(String block, String question, String answer) throws SQLException {
 
-        sql.checkAnswer(block, this.username, question, answer);
+        sql.checkAnswer(block, username, question, answer);
 
     }
-
 
 }

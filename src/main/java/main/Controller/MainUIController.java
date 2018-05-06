@@ -6,10 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.Session.UserSession;
@@ -17,6 +14,7 @@ import main.Session.UserSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class MainUIController {
 
@@ -87,6 +85,7 @@ public class MainUIController {
         element_container.getChildren().forEach((el) -> {
 
             final Button subjectButton = (Button) el;
+            subjectButton.getStyleClass().add("subjectButton");
 
             subjectButton.setOnAction((event) -> {
                 loadCategories(subjectButton.getText());
@@ -110,6 +109,7 @@ public class MainUIController {
         element_container.getChildren().forEach((el) -> {
 
             final Button catButton = (Button) el;
+            catButton.getStyleClass().add("btnCategory");
 
             catButton.setOnAction((event) -> {
                 loadTaskBlocks(catButton.getText());
@@ -120,6 +120,8 @@ public class MainUIController {
 
         if (userInstance.isEditAllowed()) {
             final Button categoryAdder = new Button("+++ Neue Kategorie hinzufügen +++");
+            categoryAdder.getStyleClass().add("btnNewElement");
+
             categoryAdder.setPrefWidth(2000);
 
             element_container.getChildren().add(categoryAdder);
@@ -127,7 +129,16 @@ public class MainUIController {
 
             categoryAdder.setOnAction((event) -> {
                 try {
-                    userInstance.addCategory("testCategoryCreation", subject );
+
+                    TextInputDialog dialog = createInputDialog();
+
+                    Optional<String> result = dialog.showAndWait();
+
+                    if (result.isPresent()){
+                        userInstance.addCategory(result.get(), subject );
+                        loadCategories(subject);
+                    }
+
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -148,14 +159,20 @@ public class MainUIController {
         addElementsToContainer(blockNames);
 
         element_container.getChildren().forEach((el) -> {
+
             final Button blockButton = (Button) el;
+            blockButton.getStyleClass().add("btnQuiz");
             blockButton.setOnAction((event) -> {
-                loadTaskBlock(blockButton.getText());
+
+                loadTaskBlock(blockButton.getText(), category);
             });
         });
 
         if (userInstance.isEditAllowed()) {
+
             final Button blockAdder = new Button("+++ Neuen Testblock hinzufügen +++");
+            blockAdder.getStyleClass().add("btnNewElement");
+
             blockAdder.setPrefWidth(2000);
             element_container.getChildren().add(blockAdder);
 
@@ -181,9 +198,21 @@ public class MainUIController {
         }
     }
 
-    private void loadTaskBlock(String blockName) {
+    private void loadTaskBlock(String blockName, String category) {
 
-        userInstance.loadTaskBlock(blockName);
+        userInstance.loadTaskBlock(blockName, category);
+
+    }
+
+
+    private TextInputDialog createInputDialog() {
+
+        TextInputDialog dialog = new TextInputDialog("walter");
+       // dialog.setTitle("Text Input Dialog");
+        //dialog.setHeaderText("Look, a Text Input Dialog");
+        dialog.setContentText("Name: ");
+
+        return dialog;
 
     }
 

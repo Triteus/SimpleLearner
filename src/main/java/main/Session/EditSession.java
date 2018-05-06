@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import main.Controller.TaskBlockEditController;
+import main.Controller.TaskBlockNewController;
 import sql.Answer;
 import sql.SqlLogik;
 
@@ -60,8 +61,33 @@ public abstract class EditSession extends UserSession {
         return sql.getTaskSections();
     }
 
+
+    /*
+    The controller is set manually depending on the teacher either choosing to create or edit a block.
+     */
+
     @Override
-    public void loadTaskBlock(String blockName) {
+    public void loadTaskBlock(String block, String category) {
+
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock_new.fxml"));
+
+        loader.setController(new TaskBlockEditController());
+
+        Stage stage = new Stage();
+        try {
+            stage.setScene(
+                    new Scene(loader.load())
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        TaskBlockEditController controller = loader.getController();
+        controller.initData(this, category, block);
+
+        stage.show();
+
 
     }
 
@@ -69,6 +95,7 @@ public abstract class EditSession extends UserSession {
     public void openTaskBlockCreator(String category) {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock_new.fxml"));
+        loader.setController(new TaskBlockNewController());
 
         Stage stage = new Stage();
         try {
@@ -79,8 +106,8 @@ public abstract class EditSession extends UserSession {
             e.printStackTrace();
         }
 
-        TaskBlockEditController controller = loader.getController();
-        controller.initData(this, category);
+        TaskBlockNewController controller = loader.getController();
+        controller.initData(this, category, "");
 
         stage.show();
 
@@ -98,6 +125,11 @@ public abstract class EditSession extends UserSession {
     public void addCategory(String category, String subject) throws SQLException {
 
         sql.createCategory(category, subject);
+    }
+
+    @Override
+    public void updateBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
+
     }
 
 }
