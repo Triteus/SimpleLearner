@@ -6,7 +6,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.Session.UserSession;
-import sql.Answer;
+import main.models.Answer;
+import main.models.Block;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -44,13 +45,19 @@ public class TaskBlockEditController extends TaskBlockController {
     @FXML
     private Button finalSaveButton;
 
+    @FXML
+    private Button nextTaskButton;
+
+    @FXML
+    private Button prevTaskButton;
+
 
     private ToggleGroup toggleAnswer;
     private HashMap<String, ArrayList<Answer>> tasks;
 
 
     private String category;
-    private String block;
+    private Block block;
 
 
     //wird von MainUIController aufgerufen
@@ -59,25 +66,30 @@ public class TaskBlockEditController extends TaskBlockController {
         toggleAnswer = new ToggleGroup();
         tasks = new HashMap<>();
         this.userSession = userSession;
-        this.category = category;
-        this.block = existingBlock;
+        this.block.setCategory(category);
+        this.block.setName(existingBlock);
+
+        //make buttons for switching tasks visible
+        prevTaskButton.setOpacity(1);
+        nextTaskButton.setOpacity(1);
+        nextTaskButton.setDisable(false);
 
         this.taskBlockTextField.setText( existingBlock);
 
-        //fetch initial data from database
-        questions = loadQuestions(existingBlock);
-        currentQuestion = questions.remove(0);
-        answersForCurrentQuestion = loadAnswersForCurrentQuestion();
-
-        displayTask();
+       displayTask();
 
     }
 
 
-
     void loadNextTask() {
 
+        if (block.switchToNextTask()) {
 
+        }
+
+    }
+
+    void loadPrevTask() {
 
     }
 
@@ -136,6 +148,26 @@ public class TaskBlockEditController extends TaskBlockController {
             resetForms();
         }
 
+    }
+
+
+    @Override
+    void displayTask() {
+
+        System.out.println("test");
+
+        questionTextarea.setText(block.getCurrTask().getQuestion());
+
+        toggleAnswer = new ToggleGroup();
+
+        this.radioContainer.getChildren().clear();
+
+        for(Answer answer : block.getCurrTask().getAnswers()) {
+
+            RadioButton rb = new RadioButton(answer.getAnswerText());
+            rb.setToggleGroup(toggleAnswer);
+            this.radioContainer.getChildren().add(rb);
+        }
     }
 
     /*

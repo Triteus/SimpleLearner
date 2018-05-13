@@ -126,12 +126,10 @@ public class MainUIController {
 
             element_container.getChildren().add(categoryAdder);
 
-
             categoryAdder.setOnAction((event) -> {
                 try {
 
                     TextInputDialog dialog = createInputDialog();
-
                     Optional<String> result = dialog.showAndWait();
 
                     if (result.isPresent()){

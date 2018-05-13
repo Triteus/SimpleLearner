@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import main.Controller.TaskBlockEditController;
 import main.Controller.TaskBlockNewController;
-import sql.Answer;
+import main.models.Answer;
 import sql.SqlLogik;
 
 import java.io.IOException;
@@ -66,6 +66,12 @@ public abstract class EditSession extends UserSession {
     The controller is set manually depending on the teacher either choosing to create or edit a block.
      */
 
+    /**
+     * Taskblock is loaded into a new stage.
+     * @param block
+     * @param category
+     */
+
     @Override
     public void loadTaskBlock(String block, String category) {
 
@@ -107,7 +113,7 @@ public abstract class EditSession extends UserSession {
         }
 
         TaskBlockNewController controller = loader.getController();
-        controller.initData(this, category, "");
+        controller.initData(this, category);
 
         stage.show();
 
@@ -119,7 +125,6 @@ public abstract class EditSession extends UserSession {
         sql.createBlock(block, this.username, category, tasks);
 
     }
-
 
     @Override
     public void addCategory(String category, String subject) throws SQLException {

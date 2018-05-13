@@ -10,6 +10,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import main.models.Answer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -930,7 +931,7 @@ public class SqlLogik {
         stmtNewTask.executeUpdate();
 
         for(Answer answer : answers) {
-            createAnswer(answer.answerText, answer.isRight, block, question, myConn);
+            createAnswer(answer.getAnswerText(), answer.isRight(), block, question, myConn);
         }
     }
 

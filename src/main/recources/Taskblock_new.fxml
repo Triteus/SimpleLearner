@@ -62,6 +62,7 @@
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
       </padding>
          <children>
+            <Button fx:id="prevTaskButton" disable="true" mnemonicParsing="false" opacity="0.0" styleClass="btn" text="&lt;" />
             <Button fx:id="saveTaskButton" mnemonicParsing="false" onAction="#onSubmitButtonClicked" prefWidth="175.0" text="Aufgabe speichern">
                <styleClass>
                   <String fx:value="okButton" />
@@ -72,6 +73,7 @@
                   <String fx:value="okButton" />
                   <String fx:value="btn" />
                </styleClass></Button>
+            <Button fx:id="nextTaskButton" disable="true" mnemonicParsing="false" opacity="0.0" styleClass="btn" text="&gt;" />
          </children>
     </HBox>
   </children>

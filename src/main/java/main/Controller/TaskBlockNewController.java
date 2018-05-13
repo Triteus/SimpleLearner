@@ -6,7 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.Session.UserSession;
-import sql.Answer;
+import main.models.Answer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,6 +45,7 @@ public class TaskBlockNewController {
     private Button finalSaveButton;
 
 
+
     private ToggleGroup toggleAnswer;
     private HashMap<String, ArrayList<Answer>> tasks;
 
@@ -53,7 +54,7 @@ public class TaskBlockNewController {
 
 
     //wird von MainUIController aufgerufen
-   public void initData(UserSession userSession, String category, String existingBlock) {
+   public void initData(UserSession userSession, String category) {
        toggleAnswer = new ToggleGroup();
        tasks = new HashMap<>();
        this.userSession = userSession;

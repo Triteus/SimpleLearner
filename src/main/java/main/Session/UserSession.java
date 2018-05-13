@@ -1,7 +1,7 @@
 package main.Session;
 
 
-import sql.Answer;
+import main.models.Answer;
 import sql.SqlLogik;
 
 import java.sql.SQLException;

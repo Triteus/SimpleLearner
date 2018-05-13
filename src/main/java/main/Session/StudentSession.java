@@ -4,7 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import main.Controller.TaskBlockController;
-import sql.Answer;
+import main.models.Answer;
 import sql.SqlLogik;
 
 import java.io.IOException;
