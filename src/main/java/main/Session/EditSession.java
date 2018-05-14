@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 import main.Controller.TaskBlockEditController;
 import main.Controller.TaskBlockNewController;
 import main.models.Answer;
+import main.models.Block;
+import main.models.Task;
 import sql.SqlLogik;
 
 import java.io.IOException;
@@ -75,9 +77,7 @@ public abstract class EditSession extends UserSession {
     @Override
     public void loadTaskBlock(String block, String category) {
 
-
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock_new.fxml"));
-
         loader.setController(new TaskBlockEditController());
 
         Stage stage = new Stage();
@@ -126,6 +126,7 @@ public abstract class EditSession extends UserSession {
 
     }
 
+
     @Override
     public void addCategory(String category, String subject) throws SQLException {
 
@@ -133,7 +134,10 @@ public abstract class EditSession extends UserSession {
     }
 
     @Override
-    public void updateBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
+    public void updateBlock(Block oldBlock, Block newBlock, String category) throws SQLException {
+
+
+        sql.updateQuiz(oldBlock.getName(), username, newBlock.getName());
 
     }
 

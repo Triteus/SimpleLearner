@@ -2,6 +2,7 @@ package main.Session;
 
 
 import main.models.Answer;
+import main.models.Block;
 import sql.SqlLogik;
 
 import java.sql.SQLException;
@@ -71,7 +72,7 @@ public abstract class UserSession {
 
     public abstract void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException;
 
-    public abstract void updateBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException;
+    public abstract void updateBlock(Block oldBlock, Block newBlock, String category) throws SQLException;
 
     public abstract void startBlock(String block) throws SQLException;
 

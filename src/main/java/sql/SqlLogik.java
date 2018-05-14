@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import main.models.Answer;
+import main.models.Block;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -970,6 +971,7 @@ public class SqlLogik {
 
     }
 
+
     /**
      * Ändert den Namen des aktiven Blocks
      *
@@ -978,6 +980,7 @@ public class SqlLogik {
      * @param blockNeu - neuer Blockname
      * @throws SQLException
      */
+
 
     public void updateQuiz(String blockAlt, String lehrer, String blockNeu) throws SQLException {
 

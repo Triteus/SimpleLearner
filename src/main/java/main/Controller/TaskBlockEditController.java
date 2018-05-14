@@ -53,7 +53,6 @@ public class TaskBlockEditController extends TaskBlockController {
 
 
     private ToggleGroup toggleAnswer;
-    private HashMap<String, ArrayList<Answer>> tasks;
 
 
     private String category;
@@ -61,37 +60,80 @@ public class TaskBlockEditController extends TaskBlockController {
 
 
     //wird von MainUIController aufgerufen
-    public void initData(UserSession userSession, String category, String existingBlock) {
+    public void initData(UserSession userSession, String category, String taskBlockName) {
+
+        this.userSession = userSession;
+
+        block = createBlock(taskBlockName);
+
+        try {
+            userSession.startBlock(taskBlockName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         toggleAnswer = new ToggleGroup();
-        tasks = new HashMap<>();
-        this.userSession = userSession;
-        this.block.setCategory(category);
-        this.block.setName(existingBlock);
 
         //make buttons for switching tasks visible
-        prevTaskButton.setOpacity(1);
-        nextTaskButton.setOpacity(1);
-        nextTaskButton.setDisable(false);
+        prevTaskButton.setOpacity(0);
+        prevTaskButton.setDisable(true);
 
-        this.taskBlockTextField.setText( existingBlock);
+        if(block.getTasks().size() > 1) {
+            nextTaskButton.setOpacity(1);
+            nextTaskButton.setDisable(false);
+        }
 
-       displayTask();
+        displayTask();
+
 
     }
 
 
+
     void loadNextTask() {
 
-        if (block.switchToNextTask()) {
+        block.switchToNextTask();
 
-        }
+        displayTask();
+
+        updateTaskSwitchButtons();
 
     }
 
     void loadPrevTask() {
 
+
+        block.switchToPrevTask();
+
+        displayTask();
+
+        updateTaskSwitchButtons();
+
     }
+
+
+    void updateTaskSwitchButtons() {
+
+        if (block.isFirstTask()) {
+            prevTaskButton.setOpacity(0);
+            prevTaskButton.setDisable(true);
+
+        } else {
+            prevTaskButton.setOpacity(1);
+            prevTaskButton.setDisable(false);
+
+        }
+
+        if(block.isLastTask()) {
+            nextTaskButton.setOpacity(0);
+            nextTaskButton.setDisable(true);
+        } else {
+            nextTaskButton.setOpacity(1);
+            nextTaskButton.setDisable(false);
+        }
+
+    }
+
 
 
     @FXML
@@ -106,23 +148,17 @@ public class TaskBlockEditController extends TaskBlockController {
         }
     }
 
+
+    /**
+     * ALL changes are submitted only after saving them
+     * @param event
+     */
     @FXML
     void onBlockSaveBtnClicked(ActionEvent event) {
 
-        //create only if there is at least one task included
-        if(!tasks.isEmpty()) {
 
-            String block = taskBlockTextField.getText();
+       // userSession.updateBlock(block);
 
-            try {
-                userSession.createBlock(block, category, tasks);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        Stage stage = (Stage)task_container.getScene().getWindow();
-        stage.close();
 
     }
 
@@ -143,18 +179,30 @@ public class TaskBlockEditController extends TaskBlockController {
                         answers.add(new Answer(answerText, isRight));
                     });
 
-            tasks.put(question, answers);
+            //tasks.put(question, answers);
 
             resetForms();
         }
 
     }
 
+    @FXML
+    void onNextTaskClick(ActionEvent event) {
+        loadNextTask();
+    }
+
+    @FXML
+    void onPrevTaskClick(ActionEvent event) {
+        loadPrevTask();
+    }
+
 
     @Override
     void displayTask() {
 
-        System.out.println("test");
+        block.printBlock();
+
+        taskBlockTextField.setText(block.getName());
 
         questionTextarea.setText(block.getCurrTask().getQuestion());
 

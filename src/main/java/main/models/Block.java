@@ -56,7 +56,6 @@ public class Block {
         int index = tasks.indexOf(currTask);
         if(index + 1 < tasks.size()) {
             currTask = tasks.get(index + 1);
-
             return true;
         }
 
@@ -75,7 +74,25 @@ public class Block {
 
     }
 
+    public void printBlock() {
+        System.out.println("Blockname: " + name);
+        System.out.println("Tasks:");
+        for(Task task : tasks) {
+            System.out.println("Question: " + task.getQuestion());
+            for(Answer answer : task.getAnswers()) {
+                System.out.println("Answer: " + answer);
+            }
 
+        }
+    }
+
+    public boolean isLastTask() {
+        return tasks.indexOf(currTask) == tasks.size() - 1;
+    }
+
+    public boolean isFirstTask() {
+        return tasks.indexOf(currTask) == 0;
+    }
 
 
 }

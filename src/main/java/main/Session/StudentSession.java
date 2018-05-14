@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import main.Controller.TaskBlockController;
 import main.models.Answer;
+import main.models.Block;
 import sql.SqlLogik;
 
 import java.io.IOException;
@@ -98,9 +99,7 @@ public class StudentSession extends UserSession {
     }
 
     @Override
-    public void updateBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
-
-    }
+    public void updateBlock(Block oldBlock, Block newBlock, String category) throws SQLException { }
 
     @Override
     public void startBlock(String block) throws SQLException {

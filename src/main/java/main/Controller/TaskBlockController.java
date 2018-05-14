@@ -65,9 +65,7 @@ public class TaskBlockController {
         this.taskBlockName = taskBlockName;
         this.userSession = userInstance;
 
-        ArrayList<Task> tasks = loadTasks(taskBlockName);
-        block = new Block(taskBlockName, tasks);
-        block.setCurrTask(0);
+        block = createBlock(taskBlockName);
 
         try {
             userInstance.startBlock(taskBlockName);
@@ -83,6 +81,15 @@ public class TaskBlockController {
 
     }
 
+    Block createBlock(String taskBlockName) {
+
+        ArrayList<Task> tasks = loadTasks(taskBlockName);
+        block = new Block(taskBlockName, tasks);
+        block.setCurrTask(0);
+
+        return block;
+    }
+
     void displayTask() {
 
         questionTextarea.setText(block.getCurrTask().getQuestion());
@@ -92,7 +99,7 @@ public class TaskBlockController {
         radioContainer.getChildren().clear();
 
         for(Answer answer : block.getCurrTask().getAnswers()) {
-            System.out.println(answer);
+
             RadioButton rb = new RadioButton(answer.getAnswerText());
             rb.setToggleGroup(toggleGroup_answers);
             radioContainer.getChildren().add(rb);
@@ -169,7 +176,6 @@ public class TaskBlockController {
         return block.switchToNextTask();
 
     }
-
 
     void closeTaskStage() {
         Stage stage = (Stage) taskContainer.getScene().getWindow();
