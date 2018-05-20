@@ -91,33 +91,12 @@ public abstract class EditSession extends UserSession {
 
         TaskBlockEditController controller = loader.getController();
         controller.initData(this, category, block);
-
-        stage.show();
-
-
-    }
-
-    @Override
-    public void openTaskBlockCreator(String category) {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock_new.fxml"));
-        loader.setController(new TaskBlockNewController());
-
-        Stage stage = new Stage();
-        try {
-            stage.setScene(
-                    new Scene(loader.load())
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        TaskBlockNewController controller = loader.getController();
-        controller.initData(this, category);
+        stage.setAlwaysOnTop(true);
 
         stage.show();
 
     }
+
 
     @Override
     public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
@@ -126,7 +105,6 @@ public abstract class EditSession extends UserSession {
 
     }
 
-
     @Override
     public void addCategory(String category, String subject) throws SQLException {
 
@@ -134,11 +112,32 @@ public abstract class EditSession extends UserSession {
     }
 
     @Override
-    public void updateBlock(Block oldBlock, Block newBlock, String category) throws SQLException {
+    public void updateBlock(String oldBlockName, String newBlockName) throws SQLException {
 
 
-        sql.updateQuiz(oldBlock.getName(), username, newBlock.getName());
+        sql.updateTaskBlockName(oldBlockName, username, newBlockName);
 
     }
+
+    @Override
+    public boolean checkAnswer(String block, String question, String answer) throws SQLException {
+
+        return sql.checkAnswer(block, username, question, answer);
+
+    }
+
+    @Override
+    public void updateTask(Task oldTask, Task newTask, String teacher, String blockName) throws SQLException {
+
+        sql.updateTask(blockName, teacher, oldTask, newTask);
+
+
+    }
+
+
+
+
+
+
 
 }

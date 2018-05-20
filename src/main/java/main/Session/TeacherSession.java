@@ -14,10 +14,6 @@ public class TeacherSession extends EditSession {
 
     }
 
-    @Override
-    public void checkAnswer(String block, String question, String answer) {
-
-    }
 
 
 }

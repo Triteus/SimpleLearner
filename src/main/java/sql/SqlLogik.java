@@ -6,12 +6,9 @@
 package sql;
 
 import Pdf.AntwortPdfObjekt;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import main.models.Answer;
 import main.models.Block;
+import main.models.Task;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -31,7 +28,7 @@ public class SqlLogik {
     private ArrayList<String> taskSections;
     private ArrayList<String> taskSectionsTemp;
     private ArrayList<String> questions;
-    private ArrayList<String> answersTemp;
+    private ArrayList<Answer> answersTemp;
     private ArrayList<String> studentsSolvedTask;
     private ArrayList<AntwortPdfObjekt> tempAnswersStudents;
     private String currentUser;
@@ -63,7 +60,7 @@ public class SqlLogik {
         return questions;
     }
 
-    public ArrayList<String> getAnswersTemp() {
+    public ArrayList<Answer> getAnswersTemp() {
         return answersTemp;
     }
 
@@ -737,7 +734,7 @@ public class SqlLogik {
      * @throws SQLException
      */
     public void loadAnswers(String block, String frage) throws SQLException {
-        String stringAntworten = "select antworttext from antwort join aufgabe on antwort.aufgabe = aufgabe.aid "
+        String stringAntworten = "select antwort.antworttext, antwort.isTrue from antwort join aufgabe on antwort.aufgabe = aufgabe.aid "
                 + "join block on aufgabe.block = block.bid where block.bid = ? and aufgabe.frage = ?";
         ResultSet rsAntworten = null;
         try (Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
@@ -750,7 +747,11 @@ public class SqlLogik {
             answersTemp.clear();
 
             while (rsAntworten.next()) {
-                answersTemp.add(rsAntworten.getString("antworttext"));
+
+                String answerText = rsAntworten.getString("antworttext");
+                boolean isTrue = rsAntworten.getBoolean("isTrue");
+                System.out.println("isTrue: " + isTrue);
+                answersTemp.add(new Answer(answerText, isTrue));
             }
         } catch (SQLException exc) {
             throw exc;
@@ -872,22 +873,10 @@ public class SqlLogik {
     }
 
 
-    private void createAnswersInTask(String block, String frage, VBox vb) throws SQLException {
+    private void createAnswersInTask(String block, String frage, ArrayList<Answer> answers) throws SQLException {
 
-        for (int i = 0; i < vb.getChildren().size(); i++) {
-            HBox hb = (HBox) vb.getChildren().get(i);
-            for (int j = 0; j < hb.getChildren().size(); j++) {
-                RadioButton rb = (RadioButton) hb.getChildren().get(j);
-                j++;
-                TextField tf = (TextField) hb.getChildren().get(j);
-                if (rb.isSelected()) {
-                    System.out.println("createAnswersInTask true");
-                    createAnswer(tf.getText(), true, block, frage);
-                } else {
-                    System.out.println("createAnswersInTask false");
-                    createAnswer(tf.getText(), false, block, frage);
-                }
-            }
+        for (Answer answer : answers) {
+            createAnswer(answer.getAnswerText(), answer.isRight(), block, frage);
         }
     }
 
@@ -982,17 +971,17 @@ public class SqlLogik {
      */
 
 
-    public void updateQuiz(String blockAlt, String lehrer, String blockNeu) throws SQLException {
+    public void updateTaskBlockName(String blockAlt, String lehrer, String blockNeu) throws SQLException {
 
         try {
             Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-            updateQuiz(blockAlt, lehrer, blockNeu, myConn);
+            updateTaskBlockName(blockAlt, lehrer, blockNeu, myConn);
         } catch (SQLException ex) {
             throw ex;
         }
     }
 
-    void updateQuiz(String blockAlt, String lehrer, String blockNeu, Connection myConn) throws SQLException {
+    void updateTaskBlockName(String blockAlt, String lehrer, String blockNeu, Connection myConn) throws SQLException {
         String updateString = "update block set block.bid = ? where block.bid = ? and block.lehrer = ?;";
         try {
 
@@ -1007,6 +996,27 @@ public class SqlLogik {
         }
     }
 
+
+    public void updateTask(String block, String lehrer, Task oldTask, Task newTask) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            updateTask(block, lehrer, oldTask, newTask, myConn);
+        } catch (SQLException ex) {
+
+            throw ex;
+        }
+    }
+
+    void updateTask(String block, String lehrer, Task oldTask, Task newTask, Connection myConn) throws SQLException {
+
+        updateAnswers(block, oldTask.getQuestion(), lehrer, newTask.getAnswers(),  myConn);
+
+        updateQuestion(block, oldTask.getQuestion(), newTask.getQuestion());
+
+    }
+
+
     /**
      * Ändert den Fragetext der aktuellen Aufgabe
      *
@@ -1017,18 +1027,18 @@ public class SqlLogik {
      */
 
 
-    public void updateTask(String block, String frageAlt, String frageNeu) throws SQLException {
+    public void updateQuestion(String block, String frageAlt, String frageNeu) throws SQLException {
 
         try {
             Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-            updateTask(block, frageAlt, frageNeu, myConn);
+            updateQuestion(block, frageAlt, frageNeu, myConn);
         } catch (SQLException ex) {
 
             throw ex;
         }
     }
 
-    void updateTask(String block, String frageAlt, String frageNeu, Connection myConn) throws SQLException {
+    void updateQuestion(String block, String frageAlt, String frageNeu, Connection myConn) throws SQLException {
 
         String deleteSchuelerBlockString = "delete from schuelerloestblock where block = ?;";
         String deleteSchuelerAufgabeString = "delete from schuelerloestaufgabe where schuelerloestaufgabe.aufgabe IN (select aid from aufgabe "
@@ -1076,22 +1086,22 @@ public class SqlLogik {
      * @param block         - der aktuelle Block
      * @param frage         - die Frage der Aufgabe
      * @param lehrer        - der bearbeitende Lehrer
-     * @param neueAntworten - die Liste mit den neuen Antwortmöglichkeiten
+     * @param newAnswers - die Liste mit den neuen Antwortmöglichkeiten
      * @throws SQLException
      */
 
 
-    public void updateAnswers(String block, String frage, String lehrer, VBox neueAntworten) throws SQLException {
+    public void updateAnswers(String block, String frage, String lehrer, ArrayList<Answer> newAnswers) throws SQLException {
 
         try {
             Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-            updateAnswers(block, frage, lehrer, neueAntworten, myConn);
+            updateAnswers(block, frage, lehrer, newAnswers, myConn);
         } catch (SQLException ex) {
             throw ex;
         }
     }
 
-    void updateAnswers(String block, String frage, String lehrer, VBox neueAntworten, Connection myConn) throws SQLException {
+    void updateAnswers(String block, String frage, String lehrer, ArrayList<Answer> newAnswers, Connection myConn) throws SQLException {
         String deleteSchuelerBlockString = "delete from schuelerloestblock where block = ?;";
         String deleteSchuelerAufgabeString = "delete from schuelerloestaufgabe where schuelerloestaufgabe.aufgabe IN (select aid from aufgabe "
                 + "where aufgabe.block = ?);";
@@ -1116,7 +1126,7 @@ public class SqlLogik {
             System.out.println("updateAnswer");
             stmtDeleteAntwort.executeUpdate();
 
-            createAnswersInTask(block, frage, neueAntworten);
+            createAnswersInTask(block, frage, newAnswers);
 
         } catch (SQLException ex) {
             throw ex;

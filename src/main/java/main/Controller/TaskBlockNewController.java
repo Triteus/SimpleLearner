@@ -44,6 +44,17 @@ public class TaskBlockNewController {
     @FXML
     private Button finalSaveButton;
 
+    @FXML
+    private Button nextTaskButton;
+
+    @FXML
+    private Button prevTaskButton;
+
+    @FXML
+    void onNextTaskClick(ActionEvent event) { }
+
+    @FXML
+    void onPrevTaskClick(ActionEvent event) { }
 
 
     private ToggleGroup toggleAnswer;

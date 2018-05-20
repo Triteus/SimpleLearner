@@ -175,11 +175,33 @@ public class MainUIController {
             element_container.getChildren().add(blockAdder);
 
             blockAdder.setOnAction((event) -> {
-
-                    userInstance.openTaskBlockCreator(category);
-
+                openTaskBlockWindow("/Taskblock_new.fxml", category);
             });
         }
+    }
+
+
+    private void openTaskBlockWindow(String fxmlPath, String category) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+        loader.setController(new TaskBlockNewController());
+
+        Stage stage = new Stage();
+        try {
+            stage.setScene(
+                    new Scene(loader.load())
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        stage.setAlwaysOnTop(true);
+        stage.setTitle("Neuen Aufgabenblock erstellen");
+
+        TaskBlockNewController controller = loader.getController();
+        controller.initData(userInstance, category);
+
+        stage.show();
+
     }
 
     private void addElementsToContainer(ArrayList<String> elNames) {

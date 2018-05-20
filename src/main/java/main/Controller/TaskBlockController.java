@@ -115,19 +115,12 @@ public class TaskBlockController {
             questions = userSession.loadQuestions(taskBlockName );
 
             for(String question : questions) {
-                ArrayList<String> answersText = loadAnswersForCurrentQuestion(taskBlockName, question);
                 ArrayList<Answer> answers = new ArrayList<>();
+                answers = loadAnswersForCurrentQuestion(taskBlockName, question);
 
 
-                /*
-                    Answers are created manually since method in SqlLogik only returns names of answers.
-                 */
-
-                for(String answer: answersText) {
-                    answers.add(new Answer(answer, false));
-                }
-
-                tasks.add(new Task(question, answers));
+                //ArrayList needs to be cloned. Otherwise, it will be referenced by every task so that only the answers for the last question remain.
+                tasks.add(new Task(question, (ArrayList<Answer>)answers.clone()));
 
             }
 
@@ -138,9 +131,9 @@ public class TaskBlockController {
         return tasks;
     }
 
-     private ArrayList<String> loadAnswersForCurrentQuestion(String blockName, String currQuestion) {
+     private ArrayList<Answer> loadAnswersForCurrentQuestion(String blockName, String currQuestion) {
 
-        ArrayList<String> answers = null;
+        ArrayList<Answer> answers = null;
         try {
             answers = userSession.loadAnswers(blockName, currQuestion );
         } catch (SQLException e) {

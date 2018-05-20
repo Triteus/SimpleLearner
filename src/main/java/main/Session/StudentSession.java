@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import main.Controller.TaskBlockController;
 import main.models.Answer;
 import main.models.Block;
+import main.models.Task;
 import sql.SqlLogik;
 
 import java.io.IOException;
@@ -89,17 +90,14 @@ public class StudentSession extends UserSession {
     }
 
     @Override
-    public void openTaskBlockCreator(String category) {
-
-    }
-
-    @Override
     public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
 
     }
 
     @Override
-    public void updateBlock(Block oldBlock, Block newBlock, String category) throws SQLException { }
+    public void updateBlock(String oldBlockName, String newBlockName) throws SQLException {
+
+    }
 
     @Override
     public void startBlock(String block) throws SQLException {
@@ -109,9 +107,14 @@ public class StudentSession extends UserSession {
     }
 
     @Override
-    public void checkAnswer(String block, String question, String answer) throws SQLException {
+    public boolean checkAnswer(String block, String question, String answer) throws SQLException {
 
-        sql.checkAnswer(block, username, question, answer);
+        return sql.checkAnswer(block, username, question, answer);
+
+    }
+
+    @Override
+    public void updateTask(Task oldTask, Task newTask, String teacher, String blockName) throws SQLException {
 
     }
 

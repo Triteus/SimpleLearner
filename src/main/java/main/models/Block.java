@@ -80,7 +80,7 @@ public class Block {
         for(Task task : tasks) {
             System.out.println("Question: " + task.getQuestion());
             for(Answer answer : task.getAnswers()) {
-                System.out.println("Answer: " + answer);
+                System.out.println("Answer: " + answer.getAnswerText());
             }
 
         }

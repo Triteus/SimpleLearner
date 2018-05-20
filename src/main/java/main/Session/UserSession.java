@@ -3,6 +3,7 @@ package main.Session;
 
 import main.models.Answer;
 import main.models.Block;
+import main.models.Task;
 import sql.SqlLogik;
 
 import java.sql.SQLException;
@@ -61,21 +62,22 @@ public abstract class UserSession {
         return sql.getQuestions();
     }
 
-    public ArrayList<String> loadAnswers(String block, String question) throws SQLException {
+    public ArrayList<Answer> loadAnswers(String block, String question) throws SQLException {
         sql.loadAnswers(block, question);
         return sql.getAnswersTemp();
     }
 
     public abstract void addCategory(String category, String subject) throws SQLException;
 
-    public abstract void openTaskBlockCreator(String category);
-
     public abstract void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException;
 
-    public abstract void updateBlock(Block oldBlock, Block newBlock, String category) throws SQLException;
+    public abstract void updateBlock(String oldBlockName, String newBlockName) throws SQLException;
 
     public abstract void startBlock(String block) throws SQLException;
 
-    public abstract void checkAnswer(String block, String question, String answer) throws SQLException;
+    public abstract boolean checkAnswer(String block, String question, String answer) throws SQLException;
+
+    public abstract void updateTask(Task oldTask, Task newTask, String teacher, String blockName) throws SQLException;
+
 
 }

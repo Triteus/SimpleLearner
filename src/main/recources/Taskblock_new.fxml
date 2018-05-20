@@ -27,7 +27,7 @@
          <items>
             <VBox id="questionPane" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label fx:id="label_question" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Frage">
+                  <Label fx:id="questionLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Frage">
                      <font>
                         <Font size="16.0" />
                      </font></Label>
@@ -37,7 +37,7 @@
             </VBox>
             <VBox id="answerPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label fx:id="label_answer" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Antwort">
+                  <Label fx:id="answerLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Antwort">
                      <font>
                         <Font size="16.0" />
                      </font></Label>
