@@ -2,20 +2,20 @@ package main.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import main.Session.UserSession;
+import main.Session.EditSession;
 import main.models.Answer;
 import main.models.Block;
 import main.models.Task;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class TaskBlockEditController extends TaskBlockController {
+public class TaskBlockEditController {
 
     @FXML
     private VBox task_container;
@@ -54,18 +54,44 @@ public class TaskBlockEditController extends TaskBlockController {
     private Button prevTaskButton;
 
 
+    private ToggleGroup toggleAnswer;
+
+    private Block block;
+    private boolean isDirty;
+    EditSession userSession;
+
+
+
+    @FXML
+    void onBlockNameChanged(KeyEvent event) { isDirty = true; }
+
+    @FXML
+    void onQuestionChanged(KeyEvent event) { isDirty = true; }
+
     @FXML
     void onAddAnswerBtnClicked(ActionEvent event) {
 
         String answer = answerTextfield.getText();
 
         if(!answer.isEmpty()) {
+            HBox answerBox = new HBox();
+            answerBox.setAlignment(Pos.CENTER);
             RadioButton answerButton = new RadioButton(answer);
+
+            //add Button to delete an answer
+            Button answerDeleteButton = new Button("-");
+            answerDeleteButton.setOnAction((actionEvent) -> {
+                radioContainer.getChildren().remove(answerBox);
+            });
+
+
+            answerBox.getChildren().addAll(answerButton, answerDeleteButton);
             answerButton.setToggleGroup(toggleAnswer);
-            radioContainer.getChildren().add(answerButton);
+
+            radioContainer.getChildren().add(answerBox);
+            isDirty = true;
         }
     }
-
 
     /**
      * ALL changes are submitted only after saving them
@@ -81,30 +107,35 @@ public class TaskBlockEditController extends TaskBlockController {
 
         if(formsFilled() && toggleAnswer.getSelectedToggle() != null) {
 
-                String question = questionTextarea.getText();
-                ArrayList<Answer> answers = new ArrayList<>();
+            String question = questionTextarea.getText();
+            ArrayList<Answer> answers = new ArrayList<>();
 
-                radioContainer.getChildren()
-                        .forEach((radioButton) -> {
-                            RadioButton btn = (RadioButton) radioButton;
-                            String answerText = btn.getText();
-                            boolean isRight = btn.isSelected();
 
-                            answers.add(new Answer(answerText, isRight));
-                        });
 
-                Task updatedTask = new Task(question, answers);
+            radioContainer.getChildren()
+                    .forEach((hBox) -> {
 
-                try {
-                    userSession.updateTask(block.getCurrTask(), updatedTask, userSession.getUsername(), block.getName());
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                //each Radiobutton is inside an HBox on the first position
+                        HBox answerBox = (HBox) hBox;
+                        RadioButton btn = (RadioButton) answerBox.getChildren().get(0);
+                        String answerText = btn.getText();
+                        boolean isRight = btn.isSelected();
 
-                block.getTasks().remove(block.getCurrTask());
-                block.getTasks().add(updatedTask);
-                block.setCurrTask(block.getTasks().size() - 1);
+                        answers.add(new Answer(answerText, isRight));
+                    });
+
+            Task updatedTask = new Task(question, answers);
+
+            try {
+                userSession.updateTask(block.getCurrTask(), updatedTask, userSession.getUsername(), block.getName());
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+
+            block.getTasks().remove(block.getCurrTask());
+            block.getTasks().add(updatedTask);
+            block.setCurrTask(block.getTasks().size() - 1);
+        }
 
     }
 
@@ -125,10 +156,16 @@ public class TaskBlockEditController extends TaskBlockController {
     @FXML
     void onSubmitButtonClicked(ActionEvent event) {
 
+        if(isDirty) {
 
-        saveUpdatedTask();
+            isDirty = false;
 
-        updateBlockName();
+            saveUpdatedTask();
+
+            updateBlockName();
+
+            updateTaskSwitchButtons();
+        }
 
     }
 
@@ -142,29 +179,18 @@ public class TaskBlockEditController extends TaskBlockController {
         loadPrevTask();
     }
 
-
-    private ToggleGroup toggleAnswer;
-
-    private String category;
-    private Block block;
-    private Block oldBlock;
-
-    private boolean isDirty;
-
     //wird von MainUIController aufgerufen
-    public void initData(UserSession userSession, String category, String taskBlockName) {
+    public void initData(EditSession uSession, String category, String taskBlockName) {
 
-        this.userSession = userSession;
-
-        block = createBlock(taskBlockName);
-
-        isDirty = false;
+        userSession = uSession;
 
         try {
-            userSession.startBlock(taskBlockName);
+            block = TaskBlockLoadBehaviour.createBlock(taskBlockName, userSession);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        isDirty = false;
 
         toggleAnswer = new ToggleGroup();
 
@@ -181,8 +207,9 @@ public class TaskBlockEditController extends TaskBlockController {
 
     }
 
-
     void loadNextTask() {
+
+        isDirty = false;
 
         block.switchToNextTask();
 
@@ -194,6 +221,7 @@ public class TaskBlockEditController extends TaskBlockController {
 
     void loadPrevTask() {
 
+        isDirty = false;
 
         block.switchToPrevTask();
 
@@ -202,7 +230,6 @@ public class TaskBlockEditController extends TaskBlockController {
         updateTaskSwitchButtons();
 
     }
-
 
     void updateTaskSwitchButtons() {
 
@@ -226,7 +253,6 @@ public class TaskBlockEditController extends TaskBlockController {
 
     }
 
-    @Override
     void displayTask() {
 
         block.printBlock();
@@ -241,16 +267,33 @@ public class TaskBlockEditController extends TaskBlockController {
 
         for(Answer answer : block.getCurrTask().getAnswers()) {
 
+            HBox answerBox = new HBox();
+            answerBox.setAlignment(Pos.CENTER);
             RadioButton rb = new RadioButton(answer.getAnswerText());
+
+            //add Button to delete an answer
+            Button answerDeleteButton = new Button("-");
+            answerDeleteButton.setOnAction((actionEvent) -> {
+                radioContainer.getChildren().remove(answerBox);
+                block.getCurrTask().getAnswers().remove(answer);
+                isDirty = true;
+            });
+
+            answerBox.getChildren().addAll(rb, answerDeleteButton);
+
+            this.radioContainer.getChildren().add(answerBox);
+
             rb.setToggleGroup(toggleAnswer);
 
                 if(answer.isRight()) {
                     rb.setSelected(true);
                 }
 
-            this.radioContainer.getChildren().add(rb);
+
         }
     }
+
+
 
     /*
     Clear questionText and all answers
@@ -271,4 +314,11 @@ public class TaskBlockEditController extends TaskBlockController {
 
     }
 
+
 }
+
+/**TODO
+ * User kann bereits erstellen Blöcken neue Tasks hinzufügen
+ * User kann einzelne Tasks löschen
+ * User kann hinzgeügte Antworten löschen
+ */

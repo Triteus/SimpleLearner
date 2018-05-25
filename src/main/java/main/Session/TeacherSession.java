@@ -9,11 +9,4 @@ public class TeacherSession extends EditSession {
         editAllowed = true;
     }
 
-    @Override
-    public void startBlock(String block) {
-
-    }
-
-
-
 }

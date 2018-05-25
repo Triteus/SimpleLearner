@@ -3,8 +3,11 @@ package main.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import main.Session.EditSession;
 import main.Session.UserSession;
 import main.models.Answer;
 
@@ -60,17 +63,24 @@ public class TaskBlockNewController {
     private ToggleGroup toggleAnswer;
     private HashMap<String, ArrayList<Answer>> tasks;
 
-    private UserSession userSession;
+    private EditSession userSession;
     private String category;
 
 
     //wird von MainUIController aufgerufen
-   public void initData(UserSession userSession, String category) {
+   public void initData(EditSession userSession, String category) {
+
        toggleAnswer = new ToggleGroup();
        tasks = new HashMap<>();
        this.userSession = userSession;
        this.category = category;
    }
+
+    @FXML
+    void onBlockNameChanged(KeyEvent event) { }
+
+    @FXML
+    void onQuestionChanged(KeyEvent event) { }
 
     @FXML
     void onAddAnswerBtnClicked(ActionEvent event) {
@@ -100,6 +110,14 @@ public class TaskBlockNewController {
         }
 
         Stage stage = (Stage)task_container.getScene().getWindow();
+
+        stage.fireEvent(
+                new WindowEvent(
+                        stage,
+                        WindowEvent.WINDOW_CLOSE_REQUEST
+                )
+        );
+
         stage.close();
 
     }

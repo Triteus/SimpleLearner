@@ -90,16 +90,6 @@ public class StudentSession extends UserSession {
     }
 
     @Override
-    public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
-
-    }
-
-    @Override
-    public void updateBlock(String oldBlockName, String newBlockName) throws SQLException {
-
-    }
-
-    @Override
     public void startBlock(String block) throws SQLException {
 
         sql.startBlock(block, username);
@@ -110,11 +100,6 @@ public class StudentSession extends UserSession {
     public boolean checkAnswer(String block, String question, String answer) throws SQLException {
 
         return sql.checkAnswer(block, username, question, answer);
-
-    }
-
-    @Override
-    public void updateTask(Task oldTask, Task newTask, String teacher, String blockName) throws SQLException {
 
     }
 

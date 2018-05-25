@@ -16,7 +16,7 @@
   <children>
       <HBox id="newTaskTextHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <TextField fx:id="taskBlockTextField" alignment="CENTER" prefHeight="26.0" prefWidth="795.0" promptText="Hier Namen des Aufgabenblocks eintragen">
+            <TextField fx:id="taskBlockTextField" alignment="CENTER" onKeyTyped="#onBlockNameChanged" prefHeight="26.0" prefWidth="795.0" promptText="Hier Namen des Aufgabenblocks eintragen">
                <font>
                   <Font size="28.0" />
                </font>
@@ -30,9 +30,15 @@
                   <Label fx:id="questionLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Frage">
                      <font>
                         <Font size="16.0" />
-                     </font></Label>
+                     </font>
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" top="10.0" />
+                     </VBox.margin></Label>
                   <Region prefHeight="70.0" prefWidth="446.0" />
-                  <TextArea id="taskText" fx:id="questionTextarea" prefHeight="110.0" prefWidth="446.0" promptText="Tragen Sie hier die Frage ein" />
+                  <TextArea id="taskText" fx:id="questionTextarea" onKeyTyped="#onQuestionChanged" prefHeight="110.0" prefWidth="446.0" promptText="Tragen Sie hier die Frage ein">
+                     <padding>
+                        <Insets left="20.0" right="20.0" />
+                     </padding></TextArea>
                </children>
             </VBox>
             <VBox id="answerPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
@@ -40,7 +46,10 @@
                   <Label fx:id="answerLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Antwort">
                      <font>
                         <Font size="16.0" />
-                     </font></Label>
+                     </font>
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" top="10.0" />
+                     </VBox.margin></Label>
                   <Region prefHeight="70.0" prefWidth="446.0" />
                   <HBox id="listContainer" alignment="CENTER" prefHeight="62.0" prefWidth="446.0">
                      <children>
@@ -51,6 +60,9 @@
                            </HBox.margin>
                         </Button>
                      </children>
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" />
+                     </VBox.margin>
                   </HBox>
                   <VBox fx:id="radioContainer" alignment="CENTER" prefHeight="176.0" prefWidth="446.0" />
                </children>

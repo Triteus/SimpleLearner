@@ -8,10 +8,8 @@ import javafx.stage.Stage;
 import main.Session.UserSession;
 import main.models.Answer;
 import main.models.Block;
-import main.models.Task;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class TaskBlockController {
 
@@ -44,13 +42,9 @@ public class TaskBlockController {
     void onSubmitClick(ActionEvent event) {
 
         if(getNextTask()) {
-
             displayTask();
-
         } else {
-
             closeTaskStage();
-
         }
     }
 
@@ -65,7 +59,11 @@ public class TaskBlockController {
         this.taskBlockName = taskBlockName;
         this.userSession = userInstance;
 
-        block = createBlock(taskBlockName);
+        try {
+            block = TaskBlockLoadBehaviour.createBlock(taskBlockName, userSession);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         try {
             userInstance.startBlock(taskBlockName);
@@ -81,14 +79,6 @@ public class TaskBlockController {
 
     }
 
-    Block createBlock(String taskBlockName) {
-
-        ArrayList<Task> tasks = loadTasks(taskBlockName);
-        block = new Block(taskBlockName, tasks);
-        block.setCurrTask(0);
-
-        return block;
-    }
 
     void displayTask() {
 
@@ -99,49 +89,12 @@ public class TaskBlockController {
         radioContainer.getChildren().clear();
 
         for(Answer answer : block.getCurrTask().getAnswers()) {
-
             RadioButton rb = new RadioButton(answer.getAnswerText());
             rb.setToggleGroup(toggleGroup_answers);
             radioContainer.getChildren().add(rb);
         }
     }
 
-    ArrayList<Task> loadTasks(String taskBlockName) {
-
-        ArrayList<String> questions = new ArrayList<>();
-        ArrayList<Task> tasks = new ArrayList<>();
-
-        try {
-            questions = userSession.loadQuestions(taskBlockName );
-
-            for(String question : questions) {
-                ArrayList<Answer> answers = new ArrayList<>();
-                answers = loadAnswersForCurrentQuestion(taskBlockName, question);
-
-
-                //ArrayList needs to be cloned. Otherwise, it will be referenced by every task so that only the answers for the last question remain.
-                tasks.add(new Task(question, (ArrayList<Answer>)answers.clone()));
-
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return tasks;
-    }
-
-     private ArrayList<Answer> loadAnswersForCurrentQuestion(String blockName, String currQuestion) {
-
-        ArrayList<Answer> answers = null;
-        try {
-            answers = userSession.loadAnswers(blockName, currQuestion );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return answers;
-    }
 
 
     void checkAnswer() {
@@ -154,15 +107,12 @@ public class TaskBlockController {
             e.printStackTrace();
         }
 
-
     }
 
     boolean getNextTask() {
 
         //no answer selected -> keep current task
-        if(toggleGroup_answers.getSelectedToggle() == null) {
-            return true;
-        }
+        if(toggleGroup_answers.getSelectedToggle() == null) { return true; }
 
         checkAnswer();
 

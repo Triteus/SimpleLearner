@@ -67,17 +67,11 @@ public abstract class UserSession {
         return sql.getAnswersTemp();
     }
 
-    public abstract void addCategory(String category, String subject) throws SQLException;
-
-    public abstract void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException;
-
-    public abstract void updateBlock(String oldBlockName, String newBlockName) throws SQLException;
-
     public abstract void startBlock(String block) throws SQLException;
 
-    public abstract boolean checkAnswer(String block, String question, String answer) throws SQLException;
+    public abstract void addCategory(String category, String subject) throws SQLException;
 
-    public abstract void updateTask(Task oldTask, Task newTask, String teacher, String blockName) throws SQLException;
+    public abstract boolean checkAnswer(String block, String question, String answer) throws SQLException;
 
 
 }

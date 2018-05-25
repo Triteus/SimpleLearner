@@ -3,11 +3,12 @@ package main.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.Authentication.Authenticator;
 import main.Session.UserSession;
@@ -24,6 +25,9 @@ public class LoginController {
 
     @FXML
     private Button btn_login;
+
+    @FXML
+    private VBox container;
 
 
     //Öffnet das Main User Interface
@@ -44,24 +48,31 @@ public class LoginController {
 
         if(instance != null) {
 
-            Stage mainUIStage;
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
-
-            try {
-
-                Node source = (Node) event.getSource();
-                mainUIStage = (Stage) source.getScene().getWindow();
-                mainUIStage.setScene(new Scene(loader.load()));
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            MainUIController controller = loader.getController();
-            controller.initData(instance);
+            openMainUIWindow(instance);
 
         } else {
             System.out.println("Ungültige Eingabe");
         }
     }
+
+    private void openMainUIWindow(UserSession userSession) {
+
+        Stage mainUIStage;
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
+
+        try {
+
+            mainUIStage = (Stage) container.getScene().getWindow();
+            mainUIStage.setScene(new Scene(loader.load()));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        MainUIController controller = loader.getController();
+        controller.initData(userSession);
+
+
+    }
+
 }

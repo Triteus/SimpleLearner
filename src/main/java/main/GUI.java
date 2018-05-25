@@ -25,6 +25,5 @@ public class GUI extends Application {
 
         primaryStage.show();
 
-
     }
 }

@@ -84,6 +84,8 @@
 }
 #listContainer{
     -fx-background-color: #f2f2f2;
+    -fx-border-color: black;
+
 }
 .subjectButton, .btnQuiz, #btnSchueler{
     -fx-background-color: #e6e6e6;

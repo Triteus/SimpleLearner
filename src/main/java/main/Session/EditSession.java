@@ -90,7 +90,7 @@ public abstract class EditSession extends UserSession {
         }
 
         TaskBlockEditController controller = loader.getController();
-        controller.initData(this, category, block);
+        controller.initData( this, category, block);
         stage.setAlwaysOnTop(true);
 
         stage.show();
@@ -98,20 +98,20 @@ public abstract class EditSession extends UserSession {
     }
 
 
-    @Override
+
     public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
 
         sql.createBlock(block, this.username, category, tasks);
 
     }
 
-    @Override
+
     public void addCategory(String category, String subject) throws SQLException {
 
         sql.createCategory(category, subject);
     }
 
-    @Override
+
     public void updateBlock(String oldBlockName, String newBlockName) throws SQLException {
 
 
@@ -126,7 +126,7 @@ public abstract class EditSession extends UserSession {
 
     }
 
-    @Override
+
     public void updateTask(Task oldTask, Task newTask, String teacher, String blockName) throws SQLException {
 
         sql.updateTask(blockName, teacher, oldTask, newTask);
@@ -134,9 +134,12 @@ public abstract class EditSession extends UserSession {
 
     }
 
+    @Override
+    public void startBlock(String block) throws SQLException {
 
+        sql.startBlock(block, username);
 
-
+    }
 
 
 

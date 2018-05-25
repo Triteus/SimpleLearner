@@ -43,12 +43,6 @@ public class AdminSession extends EditSession {
 
     }
 
-    @Override
-    public void startBlock(String block) {
-
-    }
-
-
 
 
 }

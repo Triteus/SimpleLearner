@@ -1,14 +1,18 @@
 package main.Controller;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import main.Session.EditSession;
 import main.Session.UserSession;
 
 import java.io.IOException;
@@ -19,6 +23,9 @@ import java.util.Optional;
 public class MainUIController {
 
     @FXML
+    private VBox container;
+
+    @FXML
     private Button btn_logoff;
 
     @FXML
@@ -26,9 +33,6 @@ public class MainUIController {
 
     @FXML
     private ToolBar breadcrumbBar;
-
-    @FXML
-    private Button btn_subjectRef;
 
     @FXML
     private VBox element_container;
@@ -59,7 +63,6 @@ public class MainUIController {
 
     private UserSession userInstance;
 
-
     //gets called from the LoginController
     void initData(UserSession instance) {
 
@@ -68,6 +71,21 @@ public class MainUIController {
         tf_username.setText(userInstance.getUsername());
 
         loadSubjects();
+
+        initLogoutButton();
+
+
+    }
+
+    private void initLogoutButton() {
+
+        Image cameraIcon = new Image(getClass().getResourceAsStream("/logout20.png"));
+        ImageView cameraIconView = new ImageView(cameraIcon);
+        cameraIconView.setFitHeight(15);
+        cameraIconView.setFitWidth(15);
+
+        btn_logoff.setGraphic(cameraIconView);
+
     }
 
     private void loadSubjects() {
@@ -86,9 +104,17 @@ public class MainUIController {
 
             final Button subjectButton = (Button) el;
             subjectButton.getStyleClass().add("subjectButton");
-
             subjectButton.setOnAction((event) -> {
-                loadCategories(subjectButton.getText());
+                String subject = subjectButton.getText();
+                loadCategories(subject);
+
+                Button breadCrumBtn = new Button("Fächer");
+                breadCrumBtn.setOnAction((ev) -> {
+                    loadSubjects();
+                    breadcrumbBar.getItems().clear();
+                });
+
+                breadcrumbBar.getItems().add(breadCrumBtn);
             });
         });
 
@@ -113,10 +139,20 @@ public class MainUIController {
 
             catButton.setOnAction((event) -> {
                 loadTaskBlocks(catButton.getText());
+
+                Button breadCrumBtn = new Button(subject);
+                Text splitter = new Text("/");
+
+                breadCrumBtn.setOnAction((ev) -> {
+                    loadCategories(subject);
+                    breadcrumbBar.getItems().removeAll(breadCrumBtn, splitter);
+                });
+
+                breadcrumbBar.getItems().add(splitter);
+                breadcrumbBar.getItems().add(breadCrumBtn);
             });
 
         });
-
 
         if (userInstance.isEditAllowed()) {
             final Button categoryAdder = new Button("+++ Neue Kategorie hinzufügen +++");
@@ -127,6 +163,7 @@ public class MainUIController {
             element_container.getChildren().add(categoryAdder);
 
             categoryAdder.setOnAction((event) -> {
+
                 try {
 
                     TextInputDialog dialog = createInputDialog();
@@ -161,7 +198,6 @@ public class MainUIController {
             final Button blockButton = (Button) el;
             blockButton.getStyleClass().add("btnQuiz");
             blockButton.setOnAction((event) -> {
-
                 loadTaskBlock(blockButton.getText(), category);
             });
         });
@@ -175,13 +211,13 @@ public class MainUIController {
             element_container.getChildren().add(blockAdder);
 
             blockAdder.setOnAction((event) -> {
-                openTaskBlockWindow("/Taskblock_new.fxml", category);
+                openTaskBlockWindow("/Taskblock_new.fxml", category, true);
             });
         }
     }
 
 
-    private void openTaskBlockWindow(String fxmlPath, String category) {
+    private void openTaskBlockWindow(String fxmlPath, String category, boolean isNewTask) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         loader.setController(new TaskBlockNewController());
 
@@ -194,13 +230,25 @@ public class MainUIController {
             e.printStackTrace();
         }
 
+        stage.initModality(Modality.WINDOW_MODAL);
+
+        Stage primaryStage = (Stage)container.getScene().getWindow();
+
+        stage.initOwner(primaryStage);
+
         stage.setAlwaysOnTop(true);
         stage.setTitle("Neuen Aufgabenblock erstellen");
 
-        TaskBlockNewController controller = loader.getController();
-        controller.initData(userInstance, category);
+            TaskBlockNewController controller = loader.getController();
+            //UserSession can be savely cast to EditSession since we know it is not a StudentSession
+            controller.initData((EditSession) userInstance, category);
 
         stage.show();
+
+        //reload all items after closing the stage
+        stage.setOnCloseRequest((event) -> {
+            loadTaskBlocks(category);
+        });
 
     }
 
@@ -227,7 +275,7 @@ public class MainUIController {
 
     private TextInputDialog createInputDialog() {
 
-        TextInputDialog dialog = new TextInputDialog("walter");
+        TextInputDialog dialog = new TextInputDialog();
        // dialog.setTitle("Text Input Dialog");
         //dialog.setHeaderText("Look, a Text Input Dialog");
         dialog.setContentText("Name: ");
