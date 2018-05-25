@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class Task {
 
     private String question;
-
     private ArrayList<Answer> answers;
 
     public Task(String question, ArrayList<Answer> answers) {

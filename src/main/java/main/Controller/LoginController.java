@@ -72,7 +72,6 @@ public class LoginController {
         MainUIController controller = loader.getController();
         controller.initData(userSession);
 
-
     }
 
 }

@@ -23,20 +23,13 @@ public class AdminSession extends EditSession {
  */
 
     @Override
-    public ArrayList<String> loadSubjects(String filter) {
+    public ArrayList<String> loadSubjects(String filter) throws SQLException {
 
         if (filter.isEmpty()) {
-            try {
-                sql.loadSubjects();
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-            }
+            sql.loadSubjects();
+
         } else {
-            try {
-                sql.loadFilteredSubjects(filter);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-            }
+            sql.loadFilteredSubjects(filter);
         }
 
         return sql.getSubjects();

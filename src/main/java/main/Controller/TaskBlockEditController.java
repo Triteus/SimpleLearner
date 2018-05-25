@@ -2,6 +2,7 @@ package main.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
@@ -57,9 +58,11 @@ public class TaskBlockEditController {
     private ToggleGroup toggleAnswer;
 
     private Block block;
-    private boolean isDirty;
-    EditSession userSession;
 
+    //true if blockname, question or answers were changed.
+    private boolean isDirty;
+
+    private EditSession userSession;
 
 
     @FXML
@@ -80,6 +83,7 @@ public class TaskBlockEditController {
 
             //add Button to delete an answer
             Button answerDeleteButton = new Button("-");
+
             answerDeleteButton.setOnAction((actionEvent) -> {
                 radioContainer.getChildren().remove(answerBox);
             });
@@ -288,8 +292,6 @@ public class TaskBlockEditController {
                 if(answer.isRight()) {
                     rb.setSelected(true);
                 }
-
-
         }
     }
 

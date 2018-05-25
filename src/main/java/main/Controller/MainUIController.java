@@ -1,5 +1,6 @@
 package main.Controller;
 
+import com.itextpdf.text.DocumentException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,11 +39,7 @@ public class MainUIController {
     private VBox element_container;
 
     @FXML
-    void onSubmitClick(ActionEvent event) {
-
-        loadSubjects();
-
-    }
+    void onSubmitClick(ActionEvent event) { loadSubjects(); }
 
     @FXML
     void onLogoffClick(ActionEvent event) {
@@ -73,7 +70,6 @@ public class MainUIController {
         loadSubjects();
 
         initLogoutButton();
-
 
     }
 
@@ -191,6 +187,7 @@ public class MainUIController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         addElementsToContainer(blockNames);
 
         element_container.getChildren().forEach((el) -> {
@@ -200,22 +197,73 @@ public class MainUIController {
             blockButton.setOnAction((event) -> {
                 loadTaskBlock(blockButton.getText(), category);
             });
+
+            if(userInstance.isEditAllowed()) {
+                blockButton.setOnMousePressed((event) -> {
+                    if (event.isSecondaryButtonDown()) {
+                        showWindowWithStudents(blockButton.getText());
+                    }
+                });
+            }
         });
 
         if (userInstance.isEditAllowed()) {
-
-            final Button blockAdder = new Button("+++ Neuen Testblock hinzufügen +++");
-            blockAdder.getStyleClass().add("btnNewElement");
-
-            blockAdder.setPrefWidth(2000);
-            element_container.getChildren().add(blockAdder);
-
-            blockAdder.setOnAction((event) -> {
-                openTaskBlockWindow("/Taskblock_new.fxml", category, true);
-            });
+            addBlockAdderButton(category);
         }
     }
 
+
+    /**
+     * Displays all students who already solved the given block
+     * Upon being clicked, a PDF-File is created showing the student's results.
+     *
+     * @param blockName
+     */
+
+   private void showWindowWithStudents(String blockName) {
+
+       ArrayList<String> students = new ArrayList<>();
+
+       try {
+          students = userInstance.loadStudentsWhoSolvedTaskBlock(blockName);
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+
+       ChoiceDialog<String> dialog = new ChoiceDialog<>(students.get(0), students);
+       dialog.setTitle("Schülerauswahl zur PDF-Erzeugung");
+       dialog.setHeaderText("OK klicken nach Auswahl zur Erzeugung einer Ergebnisübersicht");
+       dialog.setContentText("Wählen Sie einen Schüler aus:");
+
+       Optional<String> result = dialog.showAndWait();
+       result.ifPresent(student -> {
+           EditSession eSession = (EditSession) userInstance;
+           try {
+               eSession.saveResultsAsPDF(student, blockName);
+           } catch (DocumentException e) {
+               e.printStackTrace();
+           } catch (SQLException e) {
+               e.printStackTrace();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       });
+
+    }
+
+
+   private void addBlockAdderButton(String category) {
+
+       final Button blockAdder = new Button("+++ Neuen Testblock hinzufügen +++");
+       blockAdder.getStyleClass().add("btnNewElement");
+
+       blockAdder.setPrefWidth(2000);
+       element_container.getChildren().add(blockAdder);
+
+       blockAdder.setOnAction((event) -> {
+           openTaskBlockWindow("/Taskblock_new.fxml", category, true);
+       });
+    }
 
     private void openTaskBlockWindow(String fxmlPath, String category, boolean isNewTask) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
@@ -271,7 +319,6 @@ public class MainUIController {
         userInstance.loadTaskBlock(blockName, category);
 
     }
-
 
     private TextInputDialog createInputDialog() {
 

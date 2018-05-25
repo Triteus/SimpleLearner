@@ -1,7 +1,10 @@
 package main.Session;
 
+import Pdf.EvaluationsPdf;
+import com.itextpdf.text.DocumentException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import main.Controller.TaskBlockEditController;
 import main.Controller.TaskBlockNewController;
@@ -10,6 +13,7 @@ import main.models.Block;
 import main.models.Task;
 import sql.SqlLogik;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,26 +26,7 @@ public abstract class EditSession extends UserSession {
         editAllowed = true;
     }
 
-    @Override
-    public ArrayList<String> loadSubjects(String filter) {
 
-        if (filter.isEmpty()) {
-            try {
-                sql.loadSubjects(username);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-            }
-        } else {
-            try {
-                sql.loadFilteredSubjects(username, filter);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-            }
-        }
-
-        return sql.getSubjects();
-
-    }
 
     @Override
     public ArrayList<String> loadTaskBlocks(String category, String filter) throws Exception {
@@ -141,6 +126,47 @@ public abstract class EditSession extends UserSession {
 
     }
 
+    @Override
+    public ArrayList<String> loadStudentsWhoSolvedTaskBlock(String blockName) throws SQLException {
 
+        sql.loadStudentsSolvedTask(blockName, username);
+
+        return sql.getStudentsSolvedTask();
+
+    }
+
+    public void saveResultsAsPDF(String studentName, String blockName) throws DocumentException, SQLException, IOException {
+
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF (*.pdf)", "*pdf"));
+        File f = fc.showSaveDialog(new Stage());
+        if (f != null && !f.getName().contains(".")) {
+            f = new File(f.getAbsolutePath() + ".pdf");
+        }
+        if (f != null) {
+            try {
+                EvaluationsPdf pdf = new EvaluationsPdf(sql, f);
+                //Vor- und Nachname aus dem Button filtern
+                String vorname = "";
+                String nachname = "";
+
+                int j = 0;
+                for (int k = 0; k < studentName.length(); k++) {
+                    if (Character.isWhitespace(studentName.charAt(k))) {
+                        j = k + 1;
+                        break;
+                    }
+                    vorname += studentName.charAt(k);
+                }
+                for (int l = j; l < studentName.length(); l++) {
+                    nachname += studentName.charAt(l);
+                }
+                pdf.createTable(blockName, username, vorname, nachname);
+            } catch (IOException | DocumentException | SQLException exc) {
+                System.out.println(exc.getMessage());
+            }
+        }
+
+    }
 
 }

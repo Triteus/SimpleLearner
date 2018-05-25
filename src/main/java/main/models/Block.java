@@ -4,12 +4,9 @@ import java.util.ArrayList;
 
 public class Block {
 
-
     private String name;
     private String category;
-
     private Task currTask;
-
     private ArrayList<Task> tasks;
 
 

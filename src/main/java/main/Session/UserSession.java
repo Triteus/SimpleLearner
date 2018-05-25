@@ -73,5 +73,7 @@ public abstract class UserSession {
 
     public abstract boolean checkAnswer(String block, String question, String answer) throws SQLException;
 
+    public abstract ArrayList<String> loadStudentsWhoSolvedTaskBlock(String blockName) throws SQLException;
+
 
 }

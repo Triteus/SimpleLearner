@@ -1203,15 +1203,15 @@ public class SqlLogik {
             tempAnswersStudents.clear();
             while (rsSearchAntworten.next()) {
                 tempAnswersStudents.add(new AntwortPdfObjekt(rsSearchAntworten.getString("schueler.vorname"),
-                        rsSearchAntworten.getString("student.name"),
-                        rsSearchAntworten.getString("task.question"),
-                        rsSearchAntworten.getString("schuelerloestaufgabe.answerS"),
-                        rsSearchAntworten.getString("answer.answertext"),
-                        rsSearchAntworten.getString("subject.kuerzel"),
-                        rsSearchAntworten.getString("subject.fid"),
-                        rsSearchAntworten.getString("category.kid"),
-                        rsSearchAntworten.getString("teacher.surname"),
-                        rsSearchAntworten.getString("teacher.name")));
+                        rsSearchAntworten.getString("schueler.nachname"),
+                        rsSearchAntworten.getString("aufgabe.frage"),
+                        rsSearchAntworten.getString("schuelerloestaufgabe.antwortS"),
+                        rsSearchAntworten.getString("antwort.antworttext"),
+                        rsSearchAntworten.getString("fach.kuerzel"),
+                        rsSearchAntworten.getString("fach.fid"),
+                        rsSearchAntworten.getString("kategorie.kid"),
+                        rsSearchAntworten.getString("lehrer.vorname"),
+                        rsSearchAntworten.getString("lehrer.nachname")));
             }
         } finally {
             if (rsSearchAntworten != null) {

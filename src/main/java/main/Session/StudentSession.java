@@ -22,20 +22,12 @@ public class StudentSession extends UserSession {
     }
 
     @Override
-    public ArrayList<String> loadSubjects(String filter) {
+    public ArrayList<String> loadSubjects(String filter) throws SQLException {
 
         if (filter.isEmpty()) {
-            try {
-                sql.loadSubjects();
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-            }
+            sql.loadSubjects();
         } else {
-            try {
-                sql.loadFilteredSubjects(filter);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-            }
+            sql.loadFilteredSubjects(filter);
         }
 
         return sql.getSubjects();
@@ -46,17 +38,9 @@ public class StudentSession extends UserSession {
     public ArrayList<String> loadTaskBlocks(String category, String filter) throws Exception {
 
         if (filter.isEmpty()) {
-            try {
-                sql.loadStudentSections(category, username);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-            }
+            sql.loadStudentSections(category, username);
         } else {
-            try {
-                sql.loadFilteredStudentSections(category, username, filter);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-            }
+            sql.loadFilteredStudentSections(category, username, filter);
         }
 
         return sql.getTaskSections();
@@ -101,6 +85,11 @@ public class StudentSession extends UserSession {
 
         return sql.checkAnswer(block, username, question, answer);
 
+    }
+
+    @Override
+    public ArrayList<String> loadStudentsWhoSolvedTaskBlock(String blockName) throws SQLException {
+        return null;
     }
 
 }

@@ -8,9 +8,9 @@ import main.models.Task;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class TaskBlockLoadBehaviour {
+ class TaskBlockLoadBehaviour {
 
-    public static Block createBlock(String taskBlockName, UserSession uSession) throws SQLException {
+    static Block createBlock(String taskBlockName, UserSession uSession) throws SQLException {
 
         ArrayList<Task> tasks = loadTasks(taskBlockName, uSession);
         Block block = new Block(taskBlockName, tasks);
@@ -40,11 +40,8 @@ public class TaskBlockLoadBehaviour {
 
     private static ArrayList<Answer> loadAnswersForCurrentQuestion(String blockName, String currQuestion, UserSession uSession) throws SQLException {
 
-        ArrayList<Answer> answers = null;
+            return uSession.loadAnswers(blockName, currQuestion );
 
-            answers = uSession.loadAnswers(blockName, currQuestion );
-
-        return answers;
     }
 
 }
