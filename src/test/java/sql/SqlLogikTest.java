@@ -96,7 +96,7 @@ class SqlLogikTest {
         ResultSet resultSet = statement.executeQuery("SELECT antworttext FROM antwort WHERE istrue=1");
 
         resultSet.next();
-        assertEquals("1", resultSet.getString(0));
+        assertEquals("1", resultSet.getString("antworttext"));
     }
 
     @Test
