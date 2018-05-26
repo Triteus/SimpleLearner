@@ -86,7 +86,17 @@ class SqlLogikTest {
     }
 
     @Test
-    void createAnswer() {
+    void createAnswer1() throws SQLException {
+        sqlLogik.createAnswer("1", true, "Block1", "bla", connection);
+        sqlLogik.createAnswer("2", false, "Block1", "bla", connection);
+        sqlLogik.createAnswer("3", false, "Block1", "bla", connection);
+        sqlLogik.createAnswer("4", false, "Block1", "bla", connection);
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT antworttext FROM antwort WHERE istrue=1");
+
+        resultSet.next();
+        assertEquals("1", resultSet.getString(0));
     }
 
     @Test
