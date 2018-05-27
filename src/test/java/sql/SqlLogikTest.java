@@ -28,6 +28,7 @@ class SqlLogikTest {
         Statement statement = connection.createStatement();
         statement.execute("INSERT INTO schueler(sid, passwort, vorname, nachname) VALUES " +
                 "('test', 'password123', 'Test', 'User')");
+        statement.execute("INSERT INTO block(bid, lehrer, kategorie) VALUES ('Block1', 'blaLehrer', 'blabla')");
         statement.execute("INSERT INTO aufgabe(aid, block, frage) VALUES (1337, 'Block1', 'blabla')");
 
     }
@@ -37,6 +38,7 @@ class SqlLogikTest {
         Statement statement = connection.createStatement();
         statement.execute("DELETE FROM schueler WHERE sid = 'test'");
         statement.execute("DELETE FROM kategorie WHERE kid='Analysis'");
+        statement.execute("DELETE FROM block WHERE bid='Block1'");
         statement.execute("DELETE FROM aufgabe WHERE aid=1337");
     }
 
