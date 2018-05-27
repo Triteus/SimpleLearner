@@ -28,6 +28,8 @@ class SqlLogikTest {
         Statement statement = connection.createStatement();
         statement.execute("INSERT INTO schueler(sid, passwort, vorname, nachname) VALUES " +
                 "('test', 'password123', 'Test', 'User')");
+        statement.execute("INSERT INTO aufgabe(aid, block, frage) VALUES (1337, 'Block1', 'blabla')");
+
     }
 
     @AfterAll
@@ -35,6 +37,7 @@ class SqlLogikTest {
         Statement statement = connection.createStatement();
         statement.execute("DELETE FROM schueler WHERE sid = 'test'");
         statement.execute("DELETE FROM kategorie WHERE kid='Analysis'");
+        statement.execute("DELETE FROM aufgabe WHERE aid=1337");
     }
 
     @Test
@@ -86,7 +89,17 @@ class SqlLogikTest {
     }
 
     @Test
-    void createAnswer() {
+    void createAnswer1() throws SQLException {
+        sqlLogik.createAnswer("1", true, "Block1", "bla", connection);
+        sqlLogik.createAnswer("2", false, "Block1", "bla", connection);
+        sqlLogik.createAnswer("3", false, "Block1", "bla", connection);
+        sqlLogik.createAnswer("4", false, "Block1", "bla", connection);
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT antworttext FROM antwort WHERE istrue=1 AND aufgabe=1337");
+
+        resultSet.next();
+        assertEquals("1", resultSet.getString("antworttext"));
     }
 
     @Test
