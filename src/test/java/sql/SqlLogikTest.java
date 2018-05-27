@@ -38,8 +38,8 @@ class SqlLogikTest {
         Statement statement = connection.createStatement();
         statement.execute("DELETE FROM schueler WHERE sid = 'test'");
         statement.execute("DELETE FROM kategorie WHERE kid='Analysis'");
-        statement.execute("DELETE FROM block WHERE bid='Block1'");
         statement.execute("DELETE FROM aufgabe WHERE aid=1337");
+        statement.execute("DELETE FROM block WHERE bid='Block1'");
     }
 
     @Test
