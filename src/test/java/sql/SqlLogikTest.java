@@ -111,7 +111,7 @@ class SqlLogikTest {
         sqlLogik.createAnswer("b", true, "Block1", "hello?", connection);
 
         Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("SELECT antworttext FROM antwort EHERE istrue=1 AND aufgabe=1338");
+        ResultSet resultSet = statement.executeQuery("SELECT antworttext FROM antwort WHERE istrue=1 AND aufgabe=1338");
 
         resultSet.next();
         assertEquals("b", resultSet.getString("antworttext"));
