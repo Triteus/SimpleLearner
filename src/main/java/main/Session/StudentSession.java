@@ -2,6 +2,7 @@ package main.Session;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.Controller.TaskBlockController;
 import main.models.Answer;
@@ -48,7 +49,7 @@ public class StudentSession extends UserSession {
     }
 
     @Override
-    public void loadTaskBlock(String blockName, String category) {
+    public void loadTaskBlock(String blockName, String category, Stage mainStage) throws SQLException {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock.fxml"));
 
@@ -61,15 +62,17 @@ public class StudentSession extends UserSession {
             e.printStackTrace();
         }
 
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(mainStage);
+
+        Block taskBlock = loadTaskBlock(blockName);
+
         TaskBlockController controller = loader.getController();
-        controller.initData(blockName, this);
+        controller.initData(taskBlock, this);
 
+        stage.centerOnScreen();
+        stage.setMaximized(true);
         stage.show();
-
-    }
-
-    @Override
-    public void addCategory(String category, String subject) throws SQLException {
 
     }
 

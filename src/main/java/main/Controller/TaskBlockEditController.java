@@ -98,7 +98,7 @@ public class TaskBlockEditController {
     }
 
     /**
-     * ALL changes are submitted only after saving them
+     * DELETES A TASK FROM THE BLOCK!!!
      * @param event
      */
     @FXML
@@ -184,15 +184,11 @@ public class TaskBlockEditController {
     }
 
     //wird von MainUIController aufgerufen
-    public void initData(EditSession uSession, String category, String taskBlockName) {
+    public void initData(EditSession uSession, Block taskBlock) {
 
         userSession = uSession;
 
-        try {
-            block = TaskBlockLoadBehaviour.createBlock(taskBlockName, userSession);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        block = taskBlock;
 
         isDirty = false;
 

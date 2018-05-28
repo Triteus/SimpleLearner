@@ -5,9 +5,10 @@ import com.itextpdf.text.DocumentException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.Controller.TaskBlockEditController;
-import main.Controller.TaskBlockNewController;
+
 import main.models.Answer;
 import main.models.Block;
 import main.models.Task;
@@ -19,33 +20,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 public abstract class EditSession extends UserSession {
 
     public EditSession(SqlLogik sql, String username) {
         super(sql, username);
         editAllowed = true;
-    }
-
-
-
-    @Override
-    public ArrayList<String> loadTaskBlocks(String category, String filter) throws Exception {
-        if (filter.isEmpty()) {
-            try {
-                sql.loadTeacherSections(category, username);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-                throw exc;
-            }
-        } else {
-            try {
-                sql.loadFilteredTeacherSections(category, username, filter);
-            } catch (SQLException exc) {
-                System.out.println(exc.getMessage());
-                throw exc;
-            }
-        }
-        return sql.getTaskSections();
     }
 
 
@@ -60,7 +40,7 @@ public abstract class EditSession extends UserSession {
      */
 
     @Override
-    public void loadTaskBlock(String block, String category) {
+    public void loadTaskBlock(String block, String category, Stage mainStage) throws SQLException {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock_new.fxml"));
         loader.setController(new TaskBlockEditController());
@@ -74,66 +54,63 @@ public abstract class EditSession extends UserSession {
             e.printStackTrace();
         }
 
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(mainStage);
+
+        Block taskBlock = loadTaskBlock(block);
+
         TaskBlockEditController controller = loader.getController();
-        controller.initData( this, category, block);
+        controller.initData(this, taskBlock);
         stage.setAlwaysOnTop(true);
 
+        stage.centerOnScreen();
+        stage.setMaximized(true);
         stage.show();
+
+    }
+
+    @Override
+    public ArrayList<String> loadStudentsWhoSolvedTaskBlock(String blockName) throws SQLException {
+        sql.loadStudentsSolvedTask(blockName, username);
+        return sql.getStudentsSolvedTask();
+    }
+
+    @Override
+    public boolean checkAnswer(String block, String question, String answer) throws SQLException {
+        return sql.checkAnswer(block, username, question, answer);
+    }
+
+    @Override
+    public void startBlock(String block) throws SQLException {
 
     }
 
 
 
     public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
-
         sql.createBlock(block, this.username, category, tasks);
-
     }
 
 
     public void addCategory(String category, String subject) throws SQLException {
-
         sql.createCategory(category, subject);
     }
 
 
     public void updateBlock(String oldBlockName, String newBlockName) throws SQLException {
-
-
         sql.updateTaskBlockName(oldBlockName, username, newBlockName);
-
-    }
-
-    @Override
-    public boolean checkAnswer(String block, String question, String answer) throws SQLException {
-
-        return sql.checkAnswer(block, username, question, answer);
-
     }
 
 
     public void updateTask(Task oldTask, Task newTask, String teacher, String blockName) throws SQLException {
-
         sql.updateTask(blockName, teacher, oldTask, newTask);
+    }
 
+
+    public void deleteTask(Task task, String teacher, String blockName) throws SQLException {
 
     }
 
-    @Override
-    public void startBlock(String block) throws SQLException {
-
-        sql.startBlock(block, username);
-
-    }
-
-    @Override
-    public ArrayList<String> loadStudentsWhoSolvedTaskBlock(String blockName) throws SQLException {
-
-        sql.loadStudentsSolvedTask(blockName, username);
-
-        return sql.getStudentsSolvedTask();
-
-    }
 
     public void saveResultsAsPDF(String studentName, String blockName) throws DocumentException, SQLException, IOException {
 
@@ -146,7 +123,7 @@ public abstract class EditSession extends UserSession {
         if (f != null) {
             try {
                 EvaluationsPdf pdf = new EvaluationsPdf(sql, f);
-                //Vor- und Nachname aus dem Button filtern
+
                 String vorname = "";
                 String nachname = "";
 

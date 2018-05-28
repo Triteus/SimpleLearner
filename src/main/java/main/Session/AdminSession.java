@@ -36,6 +36,11 @@ public class AdminSession extends EditSession {
 
     }
 
+    @Override
+    public ArrayList<String> loadTaskBlocks(String category, String filter) throws Exception {
+        return null;
+    }
+
 
 
 }

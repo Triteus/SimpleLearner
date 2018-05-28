@@ -26,4 +26,24 @@ public class TeacherSession extends EditSession {
 
     }
 
+   @Override
+    public ArrayList<String> loadTaskBlocks(String category, String filter) throws Exception {
+        if (filter.isEmpty()) {
+            try {
+                sql.loadTeacherSections(category, username);
+            } catch (SQLException exc) {
+                System.out.println(exc.getMessage());
+                throw exc;
+            }
+        } else {
+            try {
+                sql.loadFilteredTeacherSections(category, username, filter);
+            } catch (SQLException exc) {
+                System.out.println(exc.getMessage());
+                throw exc;
+            }
+        }
+        return sql.getTaskSections();
+    }
+
 }

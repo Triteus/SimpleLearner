@@ -54,19 +54,15 @@ public class TaskBlockController {
     Block block;
 
     //wird vom MainUIController aufgerufen
-    public void initData(String taskBlockName, UserSession userInstance) {
+    public void initData(Block taskBlock, UserSession userInstance) {
 
         this.taskBlockName = taskBlockName;
         this.userSession = userInstance;
 
-        try {
-            block = TaskBlockLoadBehaviour.createBlock(taskBlockName, userSession);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        block = taskBlock;
 
         try {
-            userInstance.startBlock(taskBlockName);
+            userInstance.startBlock(taskBlock.getName());
         } catch (SQLException e) {
             e.printStackTrace();
         }

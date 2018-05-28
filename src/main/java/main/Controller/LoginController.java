@@ -64,6 +64,9 @@ public class LoginController {
 
             mainUIStage = (Stage) container.getScene().getWindow();
             mainUIStage.setScene(new Scene(loader.load()));
+            mainUIStage.centerOnScreen();
+            mainUIStage.setMaximized(true);
+
 
         } catch (IOException e) {
             e.printStackTrace();

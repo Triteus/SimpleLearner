@@ -1,6 +1,7 @@
 package main.Session;
 
 
+import javafx.stage.Stage;
 import main.models.Answer;
 import main.models.Block;
 import main.models.Task;
@@ -10,11 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 /*
-
     Can be refactored even further by applying the Strategy Pattern
-
  */
 
 public abstract class UserSession {
@@ -55,7 +53,7 @@ public abstract class UserSession {
 
     public abstract ArrayList<String> loadTaskBlocks(String category, String filterText) throws Exception;
 
-    public abstract void loadTaskBlock(String blockName, String category);
+    public abstract void loadTaskBlock(String blockName, String category, Stage mainStage) throws SQLException;
 
     public ArrayList<String>loadQuestions(String block) throws SQLException {
         sql.loadQuestions(block);
@@ -69,11 +67,39 @@ public abstract class UserSession {
 
     public abstract void startBlock(String block) throws SQLException;
 
-    public abstract void addCategory(String category, String subject) throws SQLException;
-
     public abstract boolean checkAnswer(String block, String question, String answer) throws SQLException;
 
     public abstract ArrayList<String> loadStudentsWhoSolvedTaskBlock(String blockName) throws SQLException;
 
+    public Block loadTaskBlock(String taskBlockName) throws SQLException {
+
+        ArrayList<Task> tasks = loadTasks(taskBlockName);
+        Block block = new Block(taskBlockName, tasks);
+        block.setCurrTask(0);
+
+        return block;
+    }
+
+    private ArrayList<Task> loadTasks(String taskBlockName) throws SQLException {
+
+        ArrayList<String> questions = new ArrayList<>();
+        ArrayList<Task> tasks = new ArrayList<>();
+
+        questions = loadQuestions(taskBlockName );
+
+        for(String question : questions) {
+            ArrayList<Answer> answers = new ArrayList<>();
+            answers = loadAnswersForCurrentQuestion(taskBlockName, question);
+
+            //ArrayList needs to be cloned. Otherwise, it will be referenced by every task so that only the answers for the last question remain.
+            tasks.add(new Task(question, (ArrayList<Answer>)answers.clone()));
+
+        }
+        return tasks;
+    }
+
+    private ArrayList<Answer> loadAnswersForCurrentQuestion(String blockName, String currQuestion) throws SQLException {
+        return loadAnswers(blockName, currQuestion );
+    }
 
 }

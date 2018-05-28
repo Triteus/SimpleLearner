@@ -51,6 +51,8 @@ public class MainUIController {
             Node source = (Node) event.getSource();
             mainUIStage = (Stage) source.getScene().getWindow();
             mainUIStage.setScene(new Scene(loader.load()));
+            mainUIStage.centerOnScreen();
+            mainUIStage.setMaximized(false);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,6 +107,7 @@ public class MainUIController {
                 loadCategories(subject);
 
                 Button breadCrumBtn = new Button("Fächer");
+                breadCrumBtn.getStyleClass().add("btn");
                 breadCrumBtn.setOnAction((ev) -> {
                     loadSubjects();
                     breadcrumbBar.getItems().clear();
@@ -135,8 +138,8 @@ public class MainUIController {
 
             catButton.setOnAction((event) -> {
                 loadTaskBlocks(catButton.getText());
-
                 Button breadCrumBtn = new Button(subject);
+                breadCrumBtn.getStyleClass().add("btn");
                 Text splitter = new Text("/");
 
                 breadCrumBtn.setOnAction((ev) -> {
@@ -166,7 +169,8 @@ public class MainUIController {
                     Optional<String> result = dialog.showAndWait();
 
                     if (result.isPresent()){
-                        userInstance.addCategory(result.get(), subject );
+                        //only users with rights to edit can add a category -> cast since we know they are privileged
+                        ((EditSession)userInstance).addCategory(result.get(), subject );
                         loadCategories(subject);
                     }
 
@@ -195,7 +199,10 @@ public class MainUIController {
             final Button blockButton = (Button) el;
             blockButton.getStyleClass().add("btnQuiz");
             blockButton.setOnAction((event) -> {
+
                 loadTaskBlock(blockButton.getText(), category);
+                loadTaskBlocks(category);
+
             });
 
             if(userInstance.isEditAllowed()) {
@@ -262,11 +269,13 @@ public class MainUIController {
 
        blockAdder.setOnAction((event) -> {
            openTaskBlockWindow("/Taskblock_new.fxml", category, true);
+           loadTaskBlocks(category);
        });
     }
 
     private void openTaskBlockWindow(String fxmlPath, String category, boolean isNewTask) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+
+       FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         loader.setController(new TaskBlockNewController());
 
         Stage stage = new Stage();
@@ -291,6 +300,8 @@ public class MainUIController {
             //UserSession can be savely cast to EditSession since we know it is not a StudentSession
             controller.initData((EditSession) userInstance, category);
 
+        stage.centerOnScreen();
+        stage.setMaximized(true);
         stage.show();
 
         //reload all items after closing the stage
@@ -316,8 +327,13 @@ public class MainUIController {
 
     private void loadTaskBlock(String blockName, String category) {
 
-        userInstance.loadTaskBlock(blockName, category);
+        Stage mainStage = (Stage)container.getScene().getWindow();
 
+        try {
+            userInstance.loadTaskBlock(blockName, category, mainStage);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private TextInputDialog createInputDialog() {
