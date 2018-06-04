@@ -15,7 +15,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>main.SimpleLearnerGUI</mainClass>
+                            <mainClass>main.GUI</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
