@@ -48,10 +48,19 @@ public class Block {
 
     }
 
+    public void addTask(Task task) {
+        this.tasks.add(task);
+    }
+
+    public void deleteTask(int index) {
+        this.tasks.remove(index);
+    }
+
 
     public boolean switchToNextTask() {
-        int index = tasks.indexOf(currTask);
-        if(index + 1 < tasks.size()) {
+
+        if(!isLastTask()) {
+            int index = tasks.indexOf(currTask);
             currTask = tasks.get(index + 1);
             return true;
         }
@@ -61,8 +70,8 @@ public class Block {
 
     public boolean switchToPrevTask() {
 
-        int index = tasks.indexOf(currTask);
-        if(index - 1 >= 0) {
+        if(!isFirstTask()) {
+            int index = tasks.indexOf(currTask);
             currTask = tasks.get(index - 1);
             return true;
         }
@@ -90,6 +99,5 @@ public class Block {
     public boolean isFirstTask() {
         return tasks.indexOf(currTask) == 0;
     }
-
 
 }

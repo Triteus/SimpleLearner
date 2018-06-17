@@ -2,6 +2,9 @@ package main.models;
 
 import java.util.ArrayList;
 
+
+/* todo: for different tasks like puzzles or cloze tests, outsource this content into QuestionAnswerTask an create Task interface  */
+
 public class Task {
 
     private String question;
