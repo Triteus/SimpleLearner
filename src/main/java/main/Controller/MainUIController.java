@@ -38,6 +38,7 @@ public class MainUIController {
     @FXML
     private VBox element_container;
 
+
     @FXML
     void onSubmitClick(ActionEvent event) { loadSubjects(); }
 
@@ -161,15 +162,15 @@ public class MainUIController {
 
             element_container.getChildren().add(categoryAdder);
 
+            /* opens Dialog  */
             categoryAdder.setOnAction((event) -> {
-
                 try {
 
                     TextInputDialog dialog = createInputDialog();
                     Optional<String> result = dialog.showAndWait();
 
                     if (result.isPresent()){
-                        //only users with rights to edit can add a category -> cast since we know they are privileged
+                        //only users with rights to edit can add a category -> explicit cast since we know they are privileged
                         ((EditSession)userInstance).addCategory(result.get(), subject );
                         loadCategories(subject);
                     }
@@ -194,6 +195,7 @@ public class MainUIController {
 
         addElementsToContainer(blockNames);
 
+        /*set listener*/
         element_container.getChildren().forEach((el) -> {
 
             final Button blockButton = (Button) el;
@@ -330,7 +332,7 @@ public class MainUIController {
         Stage mainStage = (Stage)container.getScene().getWindow();
 
         try {
-            userInstance.loadTaskBlock(blockName, category, mainStage);
+            userInstance.openTaskBlock(blockName, category, mainStage);
         } catch (SQLException e) {
             e.printStackTrace();
         }

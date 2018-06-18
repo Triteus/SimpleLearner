@@ -17,7 +17,7 @@
          <children>
             <Label fx:id="label_taskblock" alignment="CENTER" prefHeight="34.0" prefWidth="873.0" text="Aufgabe">
                <font>
-                  <Font size="23.0" />
+                  <Font size="24.0" />
                </font>
             </Label>
          </children>
@@ -26,14 +26,20 @@
          <items>
             <VBox id="createTaskPane" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label id="taskPane" fx:id="questionLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Frage" />
+                  <Label id="taskPane" fx:id="questionLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Frage">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
                   <Region id="createTaskPane" prefHeight="70.0" prefWidth="446.0" />
                   <TextArea id="taskText" fx:id="questionTextarea" editable="false" prefHeight="0.0" prefWidth="446.0" text="Was ist 1 + 1 ?" />
                </children>
             </VBox>
             <VBox id="answerPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label id="answerPane" fx:id="answerLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Antwort" />
+                  <Label id="answerPane" fx:id="answerLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Antwort">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
                   <Region prefHeight="70.0" prefWidth="446.0" />
                   <VBox id="listContainer" fx:id="radioContainer" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>

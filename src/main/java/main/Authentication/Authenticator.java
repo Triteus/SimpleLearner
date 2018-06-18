@@ -8,6 +8,14 @@ import sql.SqlLogik;
 
 public class Authenticator {
 
+
+    /** Creates a user-specific session-object that is primarily used to access the database.
+     * Used original login-implementation in SqlLogik from the old project, admin-login not possible yet.
+     * @param username
+     * @param password
+     * @return A session encapsulating the user's priviliges or null if the login fails.
+     * @throws Exception
+     */
     public static UserSession login(String username, String password) throws Exception {
 
         SqlLogik sql = new SqlLogik();

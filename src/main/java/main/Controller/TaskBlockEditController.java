@@ -57,6 +57,8 @@ public class TaskBlockEditController {
 
     private ToggleGroup toggleAnswer;
 
+    private Button taskDeleteButton;
+
     private Block block;
 
     //true if blockname, question or answers were changed.
@@ -183,6 +185,15 @@ public class TaskBlockEditController {
         loadPrevTask();
     }
 
+
+    @FXML
+    private Button deleteTaskButton;
+
+    @FXML
+    void onTaskDeleteButtonClicked(ActionEvent event) {
+
+    }
+
     //wird von MainUIController aufgerufen
     public void initData(EditSession uSession, Block taskBlock) {
 
@@ -194,6 +205,14 @@ public class TaskBlockEditController {
 
         toggleAnswer = new ToggleGroup();
 
+        initHiddenElements();
+
+        displayTask();
+
+    }
+
+    private void initHiddenElements() {
+
         //make buttons for switching tasks visible
         prevTaskButton.setOpacity(0);
         prevTaskButton.setDisable(true);
@@ -203,7 +222,11 @@ public class TaskBlockEditController {
             nextTaskButton.setDisable(false);
         }
 
-        displayTask();
+          /*show hidden button */
+        deleteTaskButton.setMinWidth(addAnswerButton.getMinWidth());
+        deleteTaskButton.setPrefWidth(addAnswerButton.getPrefWidth());
+        deleteTaskButton.setMaxWidth(addAnswerButton.getMaxWidth());
+        deleteTaskButton.setDisable(false);
 
     }
 

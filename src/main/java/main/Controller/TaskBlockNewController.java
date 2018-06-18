@@ -125,7 +125,7 @@ public class TaskBlockNewController {
     @FXML
     void onSubmitButtonClicked(ActionEvent event) {
 
-       if(formsFilled() && toggleAnswer.getSelectedToggle() != null) {
+       if(formsFilled()) {
 
            String question = questionTextarea.getText();
            ArrayList<Answer> answers = new ArrayList<>();
@@ -146,6 +146,14 @@ public class TaskBlockNewController {
 
     }
 
+    @FXML
+    private Button deleteTaskButton;
+
+    @FXML
+    void onTaskDeleteButtonClicked(ActionEvent event) {
+
+    }
+
     /*
     Clear questionText and all answers
      */
@@ -161,7 +169,8 @@ public class TaskBlockNewController {
 
     private boolean formsFilled() {
 
-        return !questionTextarea.getText().isEmpty() && !radioContainer.getChildren().isEmpty();
+        return !questionTextarea.getText().isEmpty() && !radioContainer.getChildren().isEmpty() &&
+                toggleAnswer.getSelectedToggle() != null;
 
     }
 

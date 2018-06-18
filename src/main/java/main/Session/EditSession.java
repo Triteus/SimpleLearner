@@ -40,7 +40,7 @@ public abstract class EditSession extends UserSession {
      */
 
     @Override
-    public void loadTaskBlock(String block, String category, Stage mainStage) throws SQLException {
+    public void openTaskBlock(String block, String category, Stage mainStage) throws SQLException {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock_new.fxml"));
         loader.setController(new TaskBlockEditController());
@@ -84,7 +84,6 @@ public abstract class EditSession extends UserSession {
     public void startBlock(String block) throws SQLException {
 
     }
-
 
 
     public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {

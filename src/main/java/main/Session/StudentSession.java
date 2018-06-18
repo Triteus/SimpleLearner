@@ -49,7 +49,7 @@ public class StudentSession extends UserSession {
     }
 
     @Override
-    public void loadTaskBlock(String blockName, String category, Stage mainStage) throws SQLException {
+    public void openTaskBlock(String blockName, String category, Stage mainStage) throws SQLException {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Taskblock.fxml"));
 

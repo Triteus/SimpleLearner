@@ -5,6 +5,7 @@ package main.Session;
 Has rights to delete all subjects, categories and tasks and can alternate accounts.
  */
 
+import main.models.User;
 import sql.SqlLogik;
 
 import java.sql.SQLException;
@@ -18,8 +19,7 @@ public class AdminSession extends EditSession {
     }
 
 /*
-    Sees all subjects like a student
-
+    Sees all subjects like a student (todo: Strategy-Pattern)
  */
 
     @Override
@@ -36,11 +36,36 @@ public class AdminSession extends EditSession {
 
     }
 
+    /* Admin needs to see every single taskblock in a category */
+
     @Override
     public ArrayList<String> loadTaskBlocks(String category, String filter) throws Exception {
         return null;
     }
 
+    public void createTeacher(User user) {
+
+    }
+
+    public void createStudent(User user) {
+
+    }
+
+    public void deleteTeacher(String username) {
+
+    }
+
+    public void deleteStudent(String username) {
+
+    }
+
+    public void changeStudent(User user) {
+
+    }
+
+    public void changeTeacher(User user) {
+
+    }
 
 
 }

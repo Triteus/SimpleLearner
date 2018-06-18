@@ -29,7 +29,7 @@
                <children>
                   <Label fx:id="questionLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Frage">
                      <font>
-                        <Font size="16.0" />
+                        <Font size="20.0" />
                      </font>
                      <VBox.margin>
                         <Insets left="20.0" right="20.0" top="10.0" />
@@ -45,7 +45,7 @@
                <children>
                   <Label fx:id="answerLabel" alignment="CENTER" prefHeight="19.0" prefWidth="1000.0" style="-fx-border-color: black;" text="Antwort">
                      <font>
-                        <Font size="16.0" />
+                        <Font size="20.0" />
                      </font>
                      <VBox.margin>
                         <Insets left="20.0" right="20.0" top="10.0" />
@@ -85,6 +85,12 @@
                   <String fx:value="okButton" />
                   <String fx:value="btn" />
                </styleClass></Button>
+            <Button fx:id="deleteTaskButton" disable="true" layoutX="463.0" layoutY="72.0" maxWidth="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#onTaskDeleteButtonClicked" prefHeight="70.0" prefWidth="500.0" text="Aufgabe löschen">
+               <styleClass>
+                  <String fx:value="okButton" />
+                  <String fx:value="btn" />
+               </styleClass>
+            </Button>
             <Button fx:id="nextTaskButton" disable="true" mnemonicParsing="false" onAction="#onNextTaskClick" opacity="0.0" styleClass="btn" text="&gt;" />
          </children>
     </HBox>

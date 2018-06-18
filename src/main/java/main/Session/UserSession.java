@@ -1,6 +1,5 @@
 package main.Session;
 
-
 import javafx.stage.Stage;
 import main.models.Answer;
 import main.models.Block;
@@ -53,7 +52,7 @@ public abstract class UserSession {
 
     public abstract ArrayList<String> loadTaskBlocks(String category, String filterText) throws Exception;
 
-    public abstract void loadTaskBlock(String blockName, String category, Stage mainStage) throws SQLException;
+    public abstract void openTaskBlock(String blockName, String category, Stage mainStage) throws SQLException;
 
     public ArrayList<String>loadQuestions(String block) throws SQLException {
         sql.loadQuestions(block);

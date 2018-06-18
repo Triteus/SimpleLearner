@@ -18,7 +18,7 @@ public class GUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Parent pane = FXMLLoader.load(getClass().getResource("login.fxml"));
+        Parent pane = FXMLLoader.load(getClass().getResource("/login.fxml"));
 
         Scene scene = new Scene( pane );
         primaryStage.setScene(scene);

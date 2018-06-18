@@ -67,7 +67,6 @@ public class LoginController {
             mainUIStage.centerOnScreen();
             mainUIStage.setMaximized(true);
 
-
         } catch (IOException e) {
             e.printStackTrace();
         }

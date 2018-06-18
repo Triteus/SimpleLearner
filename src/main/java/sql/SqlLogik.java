@@ -9,6 +9,7 @@ import Pdf.AntwortPdfObjekt;
 import main.models.Answer;
 import main.models.Block;
 import main.models.Task;
+import main.models.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -104,7 +105,6 @@ public class SqlLogik {
     }
 
     public SqlLogik() {
-
 
         userInfo = new Properties();
         userInfo.put("user", DbConfig.username); //Username der MySql-Datenbank
@@ -1090,6 +1090,25 @@ public class SqlLogik {
      * @throws SQLException
      */
 
+    private void deleteStudentsAnswers(Block block, Connection myConn) throws SQLException {
+
+        String deleteSchuelerBlockString = "delete from schuelerloestblock where block = ?;";
+        String deleteSchuelerAufgabeString = "delete from schuelerloestaufgabe where schuelerloestaufgabe.aufgabe IN (select aid from aufgabe "
+                + "where aufgabe.block = ?);";
+
+
+            PreparedStatement stmtSchuelerBlock = myConn.prepareStatement(deleteSchuelerBlockString);
+            PreparedStatement stmtSchuelerAufgabe = myConn.prepareStatement(deleteSchuelerAufgabeString);
+
+            stmtSchuelerAufgabe.setString(1, block.getName());
+            stmtSchuelerAufgabe.executeUpdate();
+
+            stmtSchuelerBlock.setString(1, block.getName());
+            stmtSchuelerBlock.executeUpdate();
+
+
+    }
+
 
     public void updateAnswers(String block, String frage, String lehrer, ArrayList<Answer> newAnswers) throws SQLException {
 
@@ -1131,6 +1150,44 @@ public class SqlLogik {
         } catch (SQLException ex) {
             throw ex;
         }
+    }
+
+
+
+    public void deleteTask(Block block, Task task) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            deleteTask(block, task, myConn);
+        } catch (SQLException ex) {
+            throw ex;
+        }
+    }
+
+    /*
+    Lösche Antworten, lösche Aufgabe, lösche Einträge in Schuelerloestblock
+     */
+
+    void deleteTask(Block block, Task task, Connection myConn) throws SQLException {
+
+        String deleteAnswersQuery = "DELETE FROM answer WHERE aufgabe = (SELECT aid from aufgabe where block = ? AND frage = ?) ; ";
+        String deleteTaskQuery = "DELETE FROM aufgabe WHERE Block = ? AND frage = ? ;";
+
+        PreparedStatement deleteAnswersStmt = myConn.prepareStatement(deleteAnswersQuery);
+        PreparedStatement deleteTaskStmt = myConn.prepareStatement(deleteTaskQuery);
+
+        deleteAnswersStmt.setString(1, block.getName());
+        deleteAnswersStmt.setString(2, task.getQuestion());
+
+        deleteAnswersStmt.executeQuery();
+
+        deleteTaskStmt.setString(1, block.getName());
+        deleteTaskStmt.setString(2, task.getQuestion());
+
+        deleteTaskStmt.executeQuery();
+
+        deleteStudentsAnswers(block, myConn);
+
     }
 
     /**
@@ -1230,6 +1287,155 @@ public class SqlLogik {
         }
         return outputList;
     }
+
+
+    private void createUser(String insertQuery, Connection myConn, User user) throws SQLException {
+
+        PreparedStatement insertUserStmt = myConn.prepareStatement(insertQuery);
+
+            insertUserStmt.setString(1, user.getUsername());
+            insertUserStmt.setString(2, user.getPassword());
+            insertUserStmt.setString(3, user.getSurname());
+            insertUserStmt.setString(4, user.getName());
+
+            insertUserStmt.executeQuery();
+
+    }
+
+    private void deleteUser(String insertQuery, Connection myConn, String username) throws SQLException {
+
+        PreparedStatement deleteUserStmt = myConn.prepareStatement(insertQuery);
+
+        deleteUserStmt.setString(1, username);
+
+        deleteUserStmt.executeQuery();
+
+    }
+
+    private void editUser(String insertQuery, Connection myConn, User user) {
+
+    }
+
+
+    public void createTeacher(User user) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            createTeacher(user, myConn);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+
+    }
+
+    void createTeacher(User user, Connection myConn) throws SQLException {
+
+        String insertQuery = "insert into lehrer(lid, passwort, vorname, nachname) values(?,?,?,?);";
+        createUser(insertQuery, myConn, user);
+
+    }
+
+    public void createStudent(User user) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+                createStudent(user, myConn);
+            myConn.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    void createStudent(User user, Connection myConn) throws SQLException {
+
+        String insertQuery = "insert into schueler (sid, passwort, vorname, nachname) values(?,?,?,?);";
+        createUser(insertQuery, myConn, user);
+
+    }
+
+    public void deleteTeacher(String username) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            deleteTeacher(username, myConn);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+    }
+
+    void deleteTeacher(String username, Connection myConn) throws SQLException {
+
+        String insertQuery = "DELETE FROM lehrer WHERE lid = ?;";
+        deleteUser(insertQuery, myConn, username);
+
+    }
+
+
+    public void deleteStudent(String username) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            deleteStudent(username, myConn);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+
+    }
+
+    void deleteStudent(String username, Connection myConn) throws SQLException {
+
+        String insertQuery = "DELETE FROM schueler WHERE sid = ?;";
+        deleteUser(insertQuery, myConn, username);
+
+    }
+
+    public void changeStudent(User user) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            changeStudent(user, myConn);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+    }
+
+    void changeStudent(User user, Connection myConn) throws SQLException {
+
+    }
+
+    public void changeTeacher(User user) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            changeTeacher(user, myConn);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+    }
+
+    void changeTeacher(User user, Connection myConn) throws SQLException {
+
+    }
+
+
+
     /*TODO: 
     Lehrer muessen ihre Aufgaben loeschen koennen
     Lehrer muessen Schueler sehen koennen, die ihre Bloecke geloest haben mit Anzahl richtig geloester Fragen
