@@ -37,6 +37,9 @@ public class TaskBlockController {
     @FXML
     private Button nextTaskButton;
 
+    @FXML
+    private Label pageNumberLabel;
+
 
     @FXML
     void onSubmitClick(ActionEvent event) {
@@ -69,7 +72,7 @@ public class TaskBlockController {
 
         toggleGroup_answers = new ToggleGroup();
 
-        label_taskblock.setText(taskBlockName);
+        label_taskblock.setText(block.getName());
 
         displayTask();
 
@@ -77,6 +80,8 @@ public class TaskBlockController {
 
 
     void displayTask() {
+
+        pageNumberLabel.setText("Aufgabe " + (block.getTasks().indexOf(block.getCurrTask()) + 1) + " von " + block.getTasks().size());
 
         questionTextarea.setText(block.getCurrTask().getQuestion());
 
@@ -90,7 +95,6 @@ public class TaskBlockController {
             radioContainer.getChildren().add(rb);
         }
     }
-
 
 
     void checkAnswer() {

@@ -5,6 +5,7 @@ package main.Session;
 Has rights to delete all subjects, categories and tasks and can alternate accounts.
  */
 
+import javafx.stage.Stage;
 import main.models.User;
 import sql.SqlLogik;
 
@@ -42,6 +43,7 @@ public class AdminSession extends EditSession {
     public ArrayList<String> loadTaskBlocks(String category, String filter) throws Exception {
         return null;
     }
+
 
     public void createTeacher(User user) {
 

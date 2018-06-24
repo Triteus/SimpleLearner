@@ -2,8 +2,10 @@ package main.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -65,10 +67,13 @@ public class TaskBlockNewController {
 
     private EditSession userSession;
     private String category;
+    private MainUIController mainController;
 
 
     //wird von MainUIController aufgerufen
-   public void initData(EditSession userSession, String category) {
+   public void initData(EditSession userSession, String category, MainUIController controller) {
+
+       this.mainController = controller;
 
        toggleAnswer = new ToggleGroup();
        tasks = new HashMap<>();
@@ -87,11 +92,23 @@ public class TaskBlockNewController {
 
         String answer = answerTextfield.getText();
 
-        if(!answer.isEmpty()) {
-            RadioButton answerButton = new RadioButton(answer);
-            answerButton.setToggleGroup(toggleAnswer);
-            radioContainer.getChildren().add(answerButton);
-        }
+        if(answer.isEmpty()) return;
+
+        HBox answerBox = new HBox();
+        answerBox.setAlignment(Pos.CENTER);
+
+        RadioButton answerButton = new RadioButton(answer);
+        answerButton.setToggleGroup(toggleAnswer);
+
+        Button answerDeleteButton = new Button("-");
+
+        answerBox.getChildren().addAll(answerButton, answerDeleteButton );
+        radioContainer.getChildren().add(answerBox);
+
+        answerDeleteButton.setOnAction((actionEvent) -> {
+            radioContainer.getChildren().remove(answerBox);
+        });
+
     }
 
     @FXML
@@ -109,14 +126,21 @@ public class TaskBlockNewController {
             }
         }
 
+
         Stage stage = (Stage)task_container.getScene().getWindow();
 
+        /*
         stage.fireEvent(
                 new WindowEvent(
                         stage,
                         WindowEvent.WINDOW_CLOSE_REQUEST
                 )
         );
+
+        */
+
+        /* update MainUI */
+        mainController.loadTaskBlocks(category);
 
         stage.close();
 
@@ -131,8 +155,11 @@ public class TaskBlockNewController {
            ArrayList<Answer> answers = new ArrayList<>();
 
            radioContainer.getChildren()
-                   .forEach((radioButton) -> {
-                       RadioButton btn = (RadioButton) radioButton;
+                   .forEach((radioBox) -> {
+
+                        //get button out of hbox
+                       RadioButton btn = (RadioButton)((HBox) radioBox).getChildren().get(0);
+
                        String answerText = btn.getText();
                        boolean isRight = btn.isSelected();
 

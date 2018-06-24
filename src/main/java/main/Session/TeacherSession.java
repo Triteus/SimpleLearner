@@ -1,5 +1,6 @@
 package main.Session;
 
+import javafx.stage.Stage;
 import sql.SqlLogik;
 
 import java.sql.SQLException;
@@ -45,5 +46,7 @@ public class TeacherSession extends EditSession {
         }
         return sql.getTaskSections();
     }
+
+
 
 }

@@ -54,8 +54,16 @@ public class Block {
 
     public void deleteTask(int index) {
         this.tasks.remove(index);
+
+        if(tasks.size() > 0)
+            setCurrTask(0);
     }
 
+    public void deleteCurrTask() {
+
+        int index = tasks.indexOf(currTask);
+        deleteTask(index);
+    }
 
     public boolean switchToNextTask() {
 

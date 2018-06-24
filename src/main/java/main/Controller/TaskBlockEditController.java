@@ -4,10 +4,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import main.Session.EditSession;
 import main.models.Answer;
 import main.models.Block;
@@ -54,6 +57,8 @@ public class TaskBlockEditController {
     @FXML
     private Button prevTaskButton;
 
+    @FXML
+    private Label pageNumberLabel;
 
     private ToggleGroup toggleAnswer;
 
@@ -65,6 +70,50 @@ public class TaskBlockEditController {
     private boolean isDirty;
 
     private EditSession userSession;
+
+
+
+    //wird von MainUIController aufgerufen
+    public void initData(EditSession editSession, Block taskBlock) {
+
+        userSession = editSession;
+
+        block = taskBlock;
+
+        isDirty = false;
+
+        toggleAnswer = new ToggleGroup();
+
+        initHiddenElements();
+
+        displayTask();
+
+    }
+
+    private void initHiddenElements() {
+
+
+        /*used for saving a whole newly created taskblock, not needed here*/
+        finalSaveButton.setDisable(true);
+        finalSaveButton.setMaxWidth(0);
+        finalSaveButton.setMinWidth(0);
+
+        //make buttons for switching tasks visible
+        prevTaskButton.setOpacity(0);
+        prevTaskButton.setDisable(true);
+
+        if(block.getTasks().size() > 1) {
+            nextTaskButton.setOpacity(1);
+            nextTaskButton.setDisable(false);
+        }
+
+          /*show hidden taskDeleteButton  */
+        deleteTaskButton.setMinWidth(addAnswerButton.getMinWidth());
+        deleteTaskButton.setPrefWidth(addAnswerButton.getPrefWidth());
+        deleteTaskButton.setMaxWidth(addAnswerButton.getMaxWidth());
+        deleteTaskButton.setDisable(false);
+
+    }
 
 
     @FXML
@@ -192,43 +241,30 @@ public class TaskBlockEditController {
     @FXML
     void onTaskDeleteButtonClicked(ActionEvent event) {
 
-    }
-
-    //wird von MainUIController aufgerufen
-    public void initData(EditSession uSession, Block taskBlock) {
-
-        userSession = uSession;
-
-        block = taskBlock;
-
-        isDirty = false;
-
-        toggleAnswer = new ToggleGroup();
-
-        initHiddenElements();
-
-        displayTask();
-
-    }
-
-    private void initHiddenElements() {
-
-        //make buttons for switching tasks visible
-        prevTaskButton.setOpacity(0);
-        prevTaskButton.setDisable(true);
-
-        if(block.getTasks().size() > 1) {
-            nextTaskButton.setOpacity(1);
-            nextTaskButton.setDisable(false);
+        try {
+            userSession.deleteCurrTask(this.block);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-          /*show hidden button */
-        deleteTaskButton.setMinWidth(addAnswerButton.getMinWidth());
-        deleteTaskButton.setPrefWidth(addAnswerButton.getPrefWidth());
-        deleteTaskButton.setMaxWidth(addAnswerButton.getMaxWidth());
-        deleteTaskButton.setDisable(false);
+        block.deleteCurrTask();
 
+        if(block.getTasks().size() == 0) {
+
+
+            Stage stage = (Stage)task_container.getScene().getWindow();
+
+            stage.close();
+
+        } else {
+
+            updateTaskSwitchButtons();
+
+            displayTask();
+
+        }
     }
+
 
     void loadNextTask() {
 
@@ -279,6 +315,8 @@ public class TaskBlockEditController {
     void displayTask() {
 
         block.printBlock();
+
+        pageNumberLabel.setText("Aufgabe " + (block.getTasks().indexOf(block.getCurrTask()) + 1) + " von " + block.getTasks().size());
 
         taskBlockTextField.setText(block.getName());
 

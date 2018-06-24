@@ -38,6 +38,9 @@ public class MainUIController {
     @FXML
     private VBox element_container;
 
+    @FXML
+    private ScrollPane elementContainer;
+
 
     @FXML
     void onSubmitClick(ActionEvent event) { loadSubjects(); }
@@ -65,6 +68,8 @@ public class MainUIController {
 
     //gets called from the LoginController
     void initData(UserSession instance) {
+
+        elementContainer.minHeightProperty().bind(container.heightProperty().subtract(100));
 
         this.userInstance = instance;
 
@@ -183,7 +188,7 @@ public class MainUIController {
         }
     }
 
-    private void loadTaskBlocks(String category) {
+    void loadTaskBlocks(String category) {
 
         ArrayList<String> blockNames = null;
 
@@ -278,6 +283,7 @@ public class MainUIController {
     private void openTaskBlockWindow(String fxmlPath, String category, boolean isNewTask) {
 
        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+
         loader.setController(new TaskBlockNewController());
 
         Stage stage = new Stage();
@@ -300,16 +306,13 @@ public class MainUIController {
 
             TaskBlockNewController controller = loader.getController();
             //UserSession can be savely cast to EditSession since we know it is not a StudentSession
-            controller.initData((EditSession) userInstance, category);
+            controller.initData((EditSession) userInstance, category, this);
 
         stage.centerOnScreen();
         stage.setMaximized(true);
         stage.show();
 
-        //reload all items after closing the stage
-        stage.setOnCloseRequest((event) -> {
-            loadTaskBlocks(category);
-        });
+
 
     }
 
@@ -321,7 +324,7 @@ public class MainUIController {
 
             final Button elButton = new Button();
             elButton.setText(elName);
-            elButton.setPrefWidth(1000);
+            elButton.setPrefWidth(2000);
             element_container.getChildren().add(elButton);
 
         }

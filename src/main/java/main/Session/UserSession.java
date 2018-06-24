@@ -70,6 +70,13 @@ public abstract class UserSession {
 
     public abstract ArrayList<String> loadStudentsWhoSolvedTaskBlock(String blockName) throws SQLException;
 
+
+    /** Loads a block into a block-object
+     *
+     * @param taskBlockName
+     * @return Block with tasks
+     * @throws SQLException
+     */
     public Block loadTaskBlock(String taskBlockName) throws SQLException {
 
         ArrayList<Task> tasks = loadTasks(taskBlockName);

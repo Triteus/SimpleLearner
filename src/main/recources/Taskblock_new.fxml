@@ -94,5 +94,14 @@
             <Button fx:id="nextTaskButton" disable="true" mnemonicParsing="false" onAction="#onNextTaskClick" opacity="0.0" styleClass="btn" text="&gt;" />
          </children>
     </HBox>
+      <HBox alignment="CENTER" prefHeight="31.0" prefWidth="900.0">
+         <children>
+            <Label fx:id="pageNumberLabel" alignment="CENTER" prefHeight="18.0" prefWidth="266.0" text="Seite X von X">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
   </children>
 </VBox>

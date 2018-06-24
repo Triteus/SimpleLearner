@@ -57,6 +57,7 @@ public abstract class EditSession extends UserSession {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(mainStage);
 
+        // taskblock-object that holds all tasks
         Block taskBlock = loadTaskBlock(block);
 
         TaskBlockEditController controller = loader.getController();
@@ -106,10 +107,9 @@ public abstract class EditSession extends UserSession {
     }
 
 
-    public void deleteTask(Task task, String teacher, String blockName) throws SQLException {
-
+    public void deleteCurrTask(Block block) throws SQLException {
+        sql.deleteCurrTask(block);
     }
-
 
     public void saveResultsAsPDF(String studentName, String blockName) throws DocumentException, SQLException, IOException {
 
@@ -137,7 +137,7 @@ public abstract class EditSession extends UserSession {
                 for (int l = j; l < studentName.length(); l++) {
                     nachname += studentName.charAt(l);
                 }
-                pdf.createTable(blockName, username, vorname, nachname);
+                pdf.createTable(blockName, this.username, vorname, nachname);
             } catch (IOException | DocumentException | SQLException exc) {
                 System.out.println(exc.getMessage());
             }

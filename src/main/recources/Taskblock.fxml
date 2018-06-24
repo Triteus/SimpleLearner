@@ -41,7 +41,7 @@
                         <Font size="20.0" />
                      </font></Label>
                   <Region prefHeight="70.0" prefWidth="446.0" />
-                  <VBox id="listContainer" fx:id="radioContainer" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                  <VBox id="listContainer" fx:id="radioContainer" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
 
                      </children>
@@ -50,7 +50,7 @@
             </VBox>
          </items>
     </SplitPane>
-    <HBox id="HBox" alignment="CENTER" prefHeight="183.0" prefWidth="900.0" spacing="5.0" VBox.vgrow="NEVER">
+    <HBox id="HBox" alignment="CENTER" prefHeight="86.0" prefWidth="900.0" spacing="5.0" VBox.vgrow="NEVER">
       <padding>
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
       </padding>
@@ -62,5 +62,14 @@
                </styleClass></Button>
          </children>
     </HBox>
+      <HBox alignment="CENTER" prefHeight="31.0" prefWidth="900.0">
+         <children>
+            <Label fx:id="pageNumberLabel" alignment="CENTER" prefHeight="18.0" prefWidth="266.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
   </children>
 </VBox>

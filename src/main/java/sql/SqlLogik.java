@@ -764,7 +764,6 @@ public class SqlLogik {
 
     /**
      * Löscht den gewünschten Aufgabenblock
-     *
      * @param blockname - der ausgewählte Aufgabenblock
      * @param lehrer    - der durchführende Lehrer
      * @param kategorie - die Kategorie, in welcher sich der Aufgabenblock
@@ -782,6 +781,8 @@ public class SqlLogik {
             throw exc;
         }
     }
+
+
 
     void deleteBlock(String blockname, String lehrer, String kategorie, Connection myConn) throws SQLException {
         String loeschenString = "delete from block where bid = ? and lehrer = ? and kategorie = ?;";
@@ -1154,37 +1155,40 @@ public class SqlLogik {
 
 
 
-    public void deleteTask(Block block, Task task) throws SQLException {
+    public void deleteCurrTask(Block block) throws SQLException {
 
         try {
             Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
-            deleteTask(block, task, myConn);
+            deleteCurrTask(block, myConn);
         } catch (SQLException ex) {
             throw ex;
         }
     }
 
-    /*
-    Lösche Antworten, lösche Aufgabe, lösche Einträge in Schuelerloestblock
+
+    /**
+     * @param block
+     * @param myConn
+     * @throws SQLException
      */
 
-    void deleteTask(Block block, Task task, Connection myConn) throws SQLException {
+    void deleteCurrTask(Block block, Connection myConn) throws SQLException {
 
-        String deleteAnswersQuery = "DELETE FROM answer WHERE aufgabe = (SELECT aid from aufgabe where block = ? AND frage = ?) ; ";
+        String deleteAnswersQuery = "DELETE FROM antwort WHERE aufgabe = (SELECT aid from aufgabe where block = ? AND frage = ?) ; ";
         String deleteTaskQuery = "DELETE FROM aufgabe WHERE Block = ? AND frage = ? ;";
 
         PreparedStatement deleteAnswersStmt = myConn.prepareStatement(deleteAnswersQuery);
         PreparedStatement deleteTaskStmt = myConn.prepareStatement(deleteTaskQuery);
 
         deleteAnswersStmt.setString(1, block.getName());
-        deleteAnswersStmt.setString(2, task.getQuestion());
+        deleteAnswersStmt.setString(2, block.getCurrTask().getQuestion());
 
-        deleteAnswersStmt.executeQuery();
+        deleteAnswersStmt.executeUpdate();
 
         deleteTaskStmt.setString(1, block.getName());
-        deleteTaskStmt.setString(2, task.getQuestion());
+        deleteTaskStmt.setString(2, block.getCurrTask().getQuestion());
 
-        deleteTaskStmt.executeQuery();
+        deleteTaskStmt.executeUpdate();
 
         deleteStudentsAnswers(block, myConn);
 
