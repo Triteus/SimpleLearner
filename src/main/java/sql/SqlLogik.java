@@ -197,7 +197,6 @@ public class SqlLogik {
 
     public boolean checkAnswer(String blockName, String aStudent, String aQuestion, String aAnswer) throws SQLException {
 
-
         try {
             Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
             return checkAnswer(blockName, aStudent, aQuestion, aAnswer, myConn);
@@ -893,7 +892,6 @@ public class SqlLogik {
         }
     }
 
-
     void createBlock(String block, String teacher,  String category, HashMap<String, ArrayList<Answer>> tasks, Connection myConn) throws SQLException {
 
         //create new entry in table 'block'
@@ -911,7 +909,18 @@ public class SqlLogik {
 
     }
 
-    private void createTask(String question, ArrayList<Answer> answers, String block, Connection myConn) throws SQLException {
+    public void createTask(String question, ArrayList<Answer> answers, String block) throws SQLException {
+
+        try {
+            Connection myConn = DriverManager.getConnection(databaseUrl, userInfo);
+            createTask(question, answers, block, myConn);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
+    }
+
+     void createTask(String question, ArrayList<Answer> answers, String block, Connection myConn) throws SQLException {
 
         String insertTaskQuery = "insert into aufgabe(block, frage) values(?, ?)";
         PreparedStatement stmtNewTask = myConn.prepareStatement(insertTaskQuery);
@@ -1081,15 +1090,6 @@ public class SqlLogik {
 
     }
 
-    /**
-     * Aktualisiert die Antwortmöglichkeiten einer Aufgabe
-     *
-     * @param block         - der aktuelle Block
-     * @param frage         - die Frage der Aufgabe
-     * @param lehrer        - der bearbeitende Lehrer
-     * @param newAnswers - die Liste mit den neuen Antwortmöglichkeiten
-     * @throws SQLException
-     */
 
     private void deleteStudentsAnswers(Block block, Connection myConn) throws SQLException {
 
@@ -1110,6 +1110,16 @@ public class SqlLogik {
 
     }
 
+
+    /**
+     * Aktualisiert die Antwortmöglichkeiten einer Aufgabe
+     *
+     * @param block         - der aktuelle Block
+     * @param frage         - die Frage der Aufgabe
+     * @param lehrer        - der bearbeitende Lehrer
+     * @param newAnswers - die Liste mit den neuen Antwortmöglichkeiten
+     * @throws SQLException
+     */
 
     public void updateAnswers(String block, String frage, String lehrer, ArrayList<Answer> newAnswers) throws SQLException {
 

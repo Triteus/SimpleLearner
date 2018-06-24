@@ -10,6 +10,7 @@ import main.models.Answer;
 import main.models.Block;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class TaskBlockController {
 
@@ -55,9 +56,26 @@ public class TaskBlockController {
     String taskBlockName;
     UserSession userSession;
     Block block;
+    Stage stage;
 
     //wird vom MainUIController aufgerufen
     public void initData(Block taskBlock, UserSession userInstance) {
+
+        stage = (Stage)taskContainer.getScene().getWindow();
+        stage.setOnCloseRequest(ev -> {
+            // dialog öffnen falls Nutzer vorzeitig abbrechen möchte
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("");
+                alert.setHeaderText("Test noch nicht beendet. Nach Schließen des Tests ist er nicht mehr verfügbar!");
+                alert.setContentText("Fenster wirklich schließen?");
+                alert.initOwner(stage);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() != ButtonType.OK){
+                    ev.consume();
+                }
+        });
 
         this.taskBlockName = taskBlockName;
         this.userSession = userInstance;

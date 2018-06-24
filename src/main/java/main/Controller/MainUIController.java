@@ -223,6 +223,7 @@ public class MainUIController {
 
         if (userInstance.isEditAllowed()) {
             addBlockAdderButton(category);
+            addBlockDeleteButton(category);
         }
     }
 
@@ -243,6 +244,8 @@ public class MainUIController {
        } catch (SQLException e) {
            e.printStackTrace();
        }
+
+       if(students.size() == 0) return;
 
        ChoiceDialog<String> dialog = new ChoiceDialog<>(students.get(0), students);
        dialog.setTitle("Schülerauswahl zur PDF-Erzeugung");
@@ -265,7 +268,6 @@ public class MainUIController {
 
     }
 
-
    private void addBlockAdderButton(String category) {
 
        final Button blockAdder = new Button("+++ Neuen Testblock hinzufügen +++");
@@ -279,6 +281,15 @@ public class MainUIController {
            loadTaskBlocks(category);
        });
     }
+
+
+    private void addBlockDeleteButton(String category) {
+
+
+
+
+    }
+
 
     private void openTaskBlockWindow(String fxmlPath, String category, boolean isNewTask) {
 

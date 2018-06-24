@@ -1,16 +1,15 @@
 package main.Controller;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import main.Session.EditSession;
 import main.models.Answer;
 import main.models.Block;
@@ -18,6 +17,7 @@ import main.models.Task;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class TaskBlockEditController {
 
@@ -71,10 +71,42 @@ public class TaskBlockEditController {
 
     private EditSession userSession;
 
+    private Stage stage;
 
+    //private boolean newTaskMode = false;
+
+    private BooleanProperty newTaskMode = new SimpleBooleanProperty();
 
     //wird von MainUIController aufgerufen
     public void initData(EditSession editSession, Block taskBlock) {
+
+        newTaskMode.set(false);
+
+        //bindings for dynamic UI
+        nextTaskButton.visibleProperty().bind(newTaskMode.not());
+        deleteTaskButton.visibleProperty().bind(newTaskMode.not());
+
+        nextTaskButton.managedProperty().bind(nextTaskButton.visibleProperty());
+        deleteTaskButton.managedProperty().bind(deleteTaskButton.visibleProperty());
+
+
+        stage = (Stage)task_container.getScene().getWindow();
+        stage.setOnCloseRequest(ev -> {
+            // dialog öffnen falls Änderungen noch nicht gespeichert wurden
+            if(isDirty) {
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("");
+                alert.setHeaderText("Bearbeitete Aufgabe noch nicht gespeichert!");
+                alert.setContentText("Fenster wirklich schließen?");
+                alert.initOwner(stage);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() != ButtonType.OK){
+                    ev.consume();
+                }
+            }
+        });
 
         userSession = editSession;
 
@@ -148,15 +180,11 @@ public class TaskBlockEditController {
         }
     }
 
-    /**
-     * DELETES A TASK FROM THE BLOCK!!!
-     * @param event
-     */
+
+    //element hidden, not used
     @FXML
-    void onBlockSaveBtnClicked(ActionEvent event) {
+    void onBlockSaveBtnClicked(ActionEvent event) { }
 
-
-    }
 
     private void saveUpdatedTask() {
 
@@ -211,15 +239,22 @@ public class TaskBlockEditController {
     @FXML
     void onSubmitButtonClicked(ActionEvent event) {
 
-        if(isDirty) {
 
-            isDirty = false;
+        if(newTaskMode.get() && formsFilled()) {
+              createNewTask();
+        } else {
 
-            saveUpdatedTask();
+            if (isDirty) {
 
-            updateBlockName();
+                isDirty = false;
 
-            updateTaskSwitchButtons();
+                saveUpdatedTask();
+
+                updateBlockName();
+
+                updateTaskSwitchButtons();
+            }
+
         }
 
     }
@@ -232,6 +267,7 @@ public class TaskBlockEditController {
     @FXML
     void onPrevTaskClick(ActionEvent event) {
         loadPrevTask();
+        newTaskMode.set(false);
     }
 
 
@@ -240,6 +276,18 @@ public class TaskBlockEditController {
 
     @FXML
     void onTaskDeleteButtonClicked(ActionEvent event) {
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("");
+        alert.setHeaderText("");
+        alert.setContentText("Aufgabe wirklich löschen?");
+        alert.initOwner(stage);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != ButtonType.OK){
+            return;
+        }
+
 
         try {
             userSession.deleteCurrTask(this.block);
@@ -251,17 +299,11 @@ public class TaskBlockEditController {
 
         if(block.getTasks().size() == 0) {
 
-
-            Stage stage = (Stage)task_container.getScene().getWindow();
-
             stage.close();
 
         } else {
-
             updateTaskSwitchButtons();
-
             displayTask();
-
         }
     }
 
@@ -270,11 +312,14 @@ public class TaskBlockEditController {
 
         isDirty = false;
 
-        block.switchToNextTask();
+        if(block.switchToNextTask()) {
+            displayTask();
+            updateTaskSwitchButtons();
+        } else {
 
-        displayTask();
-
-        updateTaskSwitchButtons();
+            resetForms();
+            newTaskMode.set(true);
+        }
 
     }
 
@@ -303,12 +348,55 @@ public class TaskBlockEditController {
         }
 
         if(block.isLastTask()) {
-            nextTaskButton.setOpacity(0);
-            nextTaskButton.setDisable(true);
-        } else {
+
+            if(newTaskMode.get()) {
+                nextTaskButton.setOpacity(0);
+                nextTaskButton.setDisable(true);
+            } else {
+                nextTaskButton.setText("+");
+            }
+        }
+        else {
             nextTaskButton.setOpacity(1);
             nextTaskButton.setDisable(false);
+            nextTaskButton.setText(">");
         }
+
+
+
+    }
+
+
+    /**
+     * create a new task that is is editable after being added to the db.
+     */
+    void createNewTask() {
+
+        String question = questionTextarea.getText();
+        ArrayList<Answer> answers = new ArrayList<>();
+
+        radioContainer.getChildren()
+                .forEach((radioBox) -> {
+                    //get button out of hbox
+                    RadioButton btn = (RadioButton)((HBox) radioBox).getChildren().get(0);
+
+                    String answerText = btn.getText();
+                    boolean isRight = btn.isSelected();
+
+                    answers.add(new Answer(answerText, isRight));
+                });
+
+        Task task = new Task(question, answers);
+
+        try {
+            userSession.createTask(task, block.getName());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        block.addTask(task);
+        updateTaskSwitchButtons();
+        newTaskMode.set(false);
 
     }
 
@@ -351,8 +439,6 @@ public class TaskBlockEditController {
                 }
         }
     }
-
-
 
     /*
     Clear questionText and all answers

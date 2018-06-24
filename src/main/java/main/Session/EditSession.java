@@ -16,6 +16,7 @@ import sql.SqlLogik;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,9 +87,12 @@ public abstract class EditSession extends UserSession {
 
     }
 
-
     public void createBlock(String block, String category, HashMap<String, ArrayList<Answer>> tasks) throws SQLException {
         sql.createBlock(block, this.username, category, tasks);
+    }
+
+    public void createTask(Task task, String block) throws SQLException {
+        sql.createTask(task.getQuestion(), task.getAnswers(), block);
     }
 
 

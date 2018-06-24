@@ -16,6 +16,7 @@ import main.models.Answer;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class TaskBlockNewController {
 
@@ -68,10 +69,36 @@ public class TaskBlockNewController {
     private EditSession userSession;
     private String category;
     private MainUIController mainController;
-
+    private Stage stage;
 
     //wird von MainUIController aufgerufen
    public void initData(EditSession userSession, String category, MainUIController controller) {
+
+
+       stage = (Stage)task_container.getScene().getWindow();
+
+       stage.setOnCloseRequest(ev -> {
+           // dialog öffnen falls Änderungen noch nicht gespeichert wurden
+               Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+               alert.setTitle("");
+               alert.setHeaderText("Bearbeitete Aufgabe noch nicht gespeichert!");
+               alert.setContentText("Fenster wirklich schließen?");
+               alert.initOwner(stage);
+
+           ButtonType save = new ButtonType("Speichern");
+           ButtonType noSave = new ButtonType("Nicht Speichern");
+           ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+           alert.getButtonTypes().setAll(save, noSave,cancel);
+
+           Optional<ButtonType> result = alert.showAndWait();
+           if (result.get() == save){
+               onBlockSaveBtnClicked(new ActionEvent());
+           } else if (result.get() == cancel) {
+               ev.consume();
+           }
+       });
+
 
        this.mainController = controller;
 
