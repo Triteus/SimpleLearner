@@ -19,6 +19,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 
+/**
+ * Teacher can edit an already created taskblock. They can add, remove or change tasks in a block.
+ */
+
+
 public class TaskBlockEditController {
 
     @FXML

@@ -23,6 +23,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 
+
+/**
+ * User can navigate trough categories, subjects and taskblocks.
+ * No real hierarchy implemented since SqlLogik only provides separate loading for elements (loadSubjects(), loadCategories(),...)
+ *
+ */
+
 public class MainUIController {
 
     @FXML
@@ -65,7 +72,6 @@ public class MainUIController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 
@@ -83,6 +89,7 @@ public class MainUIController {
 
         this.userInstance = instance;
 
+        //show username in the upper left corner
         tf_username.setText(userInstance.getUsername());
 
         loadSubjects();
@@ -90,6 +97,7 @@ public class MainUIController {
         initLogoutButton();
 
     }
+
 
     private void initLogoutButton() {
 
@@ -119,6 +127,9 @@ public class MainUIController {
             final Button subjectButton = (Button) el;
             subjectButton.getStyleClass().add("subjectButton");
             subjectButton.setOnAction((event) -> {
+
+                searchField.clear();
+
                 String subject = subjectButton.getText();
                 loadCategories(subject);
 
@@ -132,7 +143,6 @@ public class MainUIController {
                 breadcrumbBar.getItems().add(breadCrumBtn);
             });
         });
-
 
         searchField.setOnKeyReleased((event) -> {
                 loadSubjects();
@@ -158,6 +168,9 @@ public class MainUIController {
             catButton.getStyleClass().add("btnCategory");
 
             catButton.setOnAction((event) -> {
+
+                searchField.clear();
+
                 loadTaskBlocks(catButton.getText());
                 Button breadCrumBtn = new Button(subject);
                 breadCrumBtn.getStyleClass().add("btn");

@@ -18,6 +18,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
+
+/**
+ * Teacher can create a new taskblock.
+ * Taskblock is saved as a whole. Cancelling without saving results in no saving of any task at all.
+ */
+
 public class TaskBlockNewController {
 
     @FXML
@@ -108,7 +114,6 @@ public class TaskBlockNewController {
            }
        });
 
-
        this.mainController = controller;
 
        toggleAnswer = new ToggleGroup();
@@ -130,6 +135,7 @@ public class TaskBlockNewController {
 
         if(answer.isEmpty()) return;
 
+        //HBox holds a radioButton (answer) an a button to delete this answer
         HBox answerBox = new HBox();
         answerBox.setAlignment(Pos.CENTER);
 
