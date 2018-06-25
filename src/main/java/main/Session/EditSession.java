@@ -63,7 +63,6 @@ public abstract class EditSession extends UserSession {
 
         TaskBlockEditController controller = loader.getController();
         controller.initData(this, taskBlock);
-        stage.setAlwaysOnTop(true);
 
         stage.centerOnScreen();
         stage.setMaximized(true);

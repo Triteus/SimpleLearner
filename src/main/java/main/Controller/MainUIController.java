@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -41,6 +43,8 @@ public class MainUIController {
     @FXML
     private ScrollPane elementContainer;
 
+    @FXML
+    private HBox searchContainer;
 
     @FXML
     void onSubmitClick(ActionEvent event) { loadSubjects(); }
@@ -64,12 +68,18 @@ public class MainUIController {
 
     }
 
+
+    private TextField searchField;
+
     private UserSession userInstance;
 
     //gets called from the LoginController
     void initData(UserSession instance) {
 
-        elementContainer.minHeightProperty().bind(container.heightProperty().subtract(100));
+        searchField = new TextField();
+        searchContainer.getChildren().add(searchField);
+
+        elementContainer.minHeightProperty().bind(container.heightProperty().subtract(200));
 
         this.userInstance = instance;
 
@@ -97,7 +107,7 @@ public class MainUIController {
         ArrayList<String> subjectNames = null;
 
         try {
-            subjectNames = userInstance.loadSubjects("");
+            subjectNames = userInstance.loadSubjects(searchField.getText());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,6 +133,11 @@ public class MainUIController {
             });
         });
 
+
+        searchField.setOnKeyReleased((event) -> {
+                loadSubjects();
+        });
+
     }
 
     private void loadCategories(String subject) {
@@ -130,7 +145,7 @@ public class MainUIController {
         ArrayList<String> categoryNames = null;
 
         try {
-            categoryNames = userInstance.loadCategories(subject, "");
+            categoryNames = userInstance.loadCategories(subject, searchField.getText());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -186,6 +201,11 @@ public class MainUIController {
             });
 
         }
+
+        searchField.setOnKeyReleased((event) -> {
+                loadCategories(subject);
+        });
+
     }
 
     void loadTaskBlocks(String category) {
@@ -193,7 +213,7 @@ public class MainUIController {
         ArrayList<String> blockNames = null;
 
         try {
-            blockNames = userInstance.loadTaskBlocks(category, "");
+            blockNames = userInstance.loadTaskBlocks(category, searchField.getText());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -225,6 +245,12 @@ public class MainUIController {
             addBlockAdderButton(category);
             addBlockDeleteButton(category);
         }
+
+
+        searchField.setOnKeyReleased((event) -> {
+                loadTaskBlocks(category);
+        });
+
     }
 
 
@@ -307,17 +333,13 @@ public class MainUIController {
         }
 
         stage.initModality(Modality.WINDOW_MODAL);
-
         Stage primaryStage = (Stage)container.getScene().getWindow();
-
         stage.initOwner(primaryStage);
-
-        stage.setAlwaysOnTop(true);
         stage.setTitle("Neuen Aufgabenblock erstellen");
 
-            TaskBlockNewController controller = loader.getController();
-            //UserSession can be savely cast to EditSession since we know it is not a StudentSession
-            controller.initData((EditSession) userInstance, category, this);
+        TaskBlockNewController controller = loader.getController();
+        //UserSession can be savely cast to EditSession since we know it is not a StudentSession
+        controller.initData((EditSession) userInstance, category, this);
 
         stage.centerOnScreen();
         stage.setMaximized(true);

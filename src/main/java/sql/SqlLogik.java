@@ -23,7 +23,6 @@ import java.util.Properties;
  */
 public class SqlLogik {
 
-    private Properties userInfo;
     private ArrayList<String> subjects;
     private ArrayList<String> categories;
     private ArrayList<String> taskSections;
@@ -35,7 +34,8 @@ public class SqlLogik {
     private String currentUser;
     private boolean isDone;
 
-    private String databaseUrl = DbConfig.url;
+    Properties userInfo;
+    String databaseUrl = DbConfig.url;
 
     public Properties getUserInfo() {
         return userInfo;

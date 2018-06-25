@@ -5,6 +5,8 @@ import main.Session.TeacherSession;
 import main.Session.UserSession;
 import sql.SqlLogik;
 
+import java.sql.SQLException;
+
 
 public class Authenticator {
 
@@ -16,7 +18,7 @@ public class Authenticator {
      * @return A session encapsulating the user's priviliges or null if the login fails.
      * @throws Exception
      */
-    public static UserSession login(String username, String password) throws Exception {
+    public static UserSession login(String username, String password) throws SQLException {
 
         SqlLogik sql = new SqlLogik();
 

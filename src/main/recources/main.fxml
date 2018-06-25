@@ -33,13 +33,19 @@
             </BorderPane>
          </children>
       </HBox>
-      <HBox prefHeight="36.0" prefWidth="2000.0">
+      <VBox prefHeight="82.0" prefWidth="900.0">
          <children>
             <ToolBar fx:id="breadcrumbBar" prefHeight="36.0" prefWidth="2000.0" />
+            <HBox fx:id="searchContainer" alignment="CENTER" prefHeight="43.0" prefWidth="900.0">
+               <children>
+                  <Label text="Suchen" />
+               </children>
+            </HBox>
          </children>
-      </HBox>
+      </VBox>
       <VBox alignment="CENTER" prefHeight="470.0" prefWidth="2000.0">
          <children>
+            <HBox prefHeight="100.0" prefWidth="200.0" />
             <ScrollPane fx:id="elementContainer" fitToHeight="true" fitToWidth="true" maxHeight="-Infinity" prefHeight="119.0" prefViewportHeight="1000.0" prefWidth="900.0" VBox.vgrow="ALWAYS">
                <content>
                   <VBox fx:id="element_container" alignment="CENTER" maxHeight="-Infinity" prefHeight="500.0" />

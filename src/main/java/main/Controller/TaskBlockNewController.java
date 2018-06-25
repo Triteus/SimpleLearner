@@ -57,6 +57,9 @@ public class TaskBlockNewController {
     private Button prevTaskButton;
 
     @FXML
+    private Label pageNumberLabel;
+
+    @FXML
     void onNextTaskClick(ActionEvent event) { }
 
     @FXML
@@ -74,14 +77,20 @@ public class TaskBlockNewController {
     //wird von MainUIController aufgerufen
    public void initData(EditSession userSession, String category, MainUIController controller) {
 
+        pageNumberLabel.setText("");
+        pageNumberLabel.setVisible(false);
+        pageNumberLabel.setManaged(false);
 
        stage = (Stage)task_container.getScene().getWindow();
 
        stage.setOnCloseRequest(ev -> {
+
+           if(tasks.isEmpty()) return;
+
            // dialog öffnen falls Änderungen noch nicht gespeichert wurden
                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                alert.setTitle("");
-               alert.setHeaderText("Bearbeitete Aufgabe noch nicht gespeichert!");
+               alert.setHeaderText("Aufgabenblock noch nicht gespeichert!");
                alert.setContentText("Fenster wirklich schließen?");
                alert.initOwner(stage);
 
@@ -152,7 +161,6 @@ public class TaskBlockNewController {
                 e.printStackTrace();
             }
         }
-
 
         Stage stage = (Stage)task_container.getScene().getWindow();
 

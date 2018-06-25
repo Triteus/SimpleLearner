@@ -188,12 +188,10 @@ public class TaskBlockEditController {
 
     private void saveUpdatedTask() {
 
-        if(formsFilled() && toggleAnswer.getSelectedToggle() != null) {
+        if(formsFilled()) {
 
             String question = questionTextarea.getText();
             ArrayList<Answer> answers = new ArrayList<>();
-
-
 
             radioContainer.getChildren()
                     .forEach((hBox) -> {
@@ -218,6 +216,9 @@ public class TaskBlockEditController {
             block.getTasks().remove(block.getCurrTask());
             block.getTasks().add(updatedTask);
             block.setCurrTask(block.getTasks().size() - 1);
+
+            displayTask();
+            updateTaskSwitchButtons();
         }
 
     }
@@ -239,9 +240,10 @@ public class TaskBlockEditController {
     @FXML
     void onSubmitButtonClicked(ActionEvent event) {
 
+    if(formsFilled()) {
 
-        if(newTaskMode.get() && formsFilled()) {
-              createNewTask();
+        if (newTaskMode.get()) {
+            createNewTask();
         } else {
 
             if (isDirty) {
@@ -256,6 +258,7 @@ public class TaskBlockEditController {
             }
 
         }
+    }
 
     }
 
@@ -288,7 +291,6 @@ public class TaskBlockEditController {
             return;
         }
 
-
         try {
             userSession.deleteCurrTask(this.block);
         } catch (SQLException e) {
@@ -316,7 +318,6 @@ public class TaskBlockEditController {
             displayTask();
             updateTaskSwitchButtons();
         } else {
-
             resetForms();
             newTaskMode.set(true);
         }
@@ -348,21 +349,14 @@ public class TaskBlockEditController {
         }
 
         if(block.isLastTask()) {
+            nextTaskButton.setText("+");
 
-            if(newTaskMode.get()) {
-                nextTaskButton.setOpacity(0);
-                nextTaskButton.setDisable(true);
-            } else {
-                nextTaskButton.setText("+");
-            }
         }
         else {
             nextTaskButton.setOpacity(1);
             nextTaskButton.setDisable(false);
             nextTaskButton.setText(">");
         }
-
-
 
     }
 
@@ -405,9 +399,7 @@ public class TaskBlockEditController {
         block.printBlock();
 
         pageNumberLabel.setText("Aufgabe " + (block.getTasks().indexOf(block.getCurrTask()) + 1) + " von " + block.getTasks().size());
-
         taskBlockTextField.setText(block.getName());
-
         questionTextarea.setText(block.getCurrTask().getQuestion());
 
         toggleAnswer = new ToggleGroup();
@@ -421,11 +413,13 @@ public class TaskBlockEditController {
             RadioButton rb = new RadioButton(answer.getAnswerText());
 
             //add Button to delete an answer
-            Button answerDeleteButton = new Button("-");
+            Button answerDeleteButton = new Button(" - ");
             answerDeleteButton.setOnAction((actionEvent) -> {
+
                 radioContainer.getChildren().remove(answerBox);
                 block.getCurrTask().getAnswers().remove(answer);
                 isDirty = true;
+
             });
 
             answerBox.getChildren().addAll(rb, answerDeleteButton);
@@ -455,15 +449,10 @@ public class TaskBlockEditController {
 
     private boolean formsFilled() {
 
-        return !questionTextarea.getText().isEmpty() && !radioContainer.getChildren().isEmpty();
+        return !questionTextarea.getText().isEmpty() && !radioContainer.getChildren().isEmpty()
+                && !taskBlockTextField.getText().isEmpty() && toggleAnswer.getSelectedToggle() != null;
 
     }
 
-
 }
 
-/**TODO
- * User kann bereits erstellen Blöcken neue Tasks hinzufügen
- * User kann einzelne Tasks löschen
- * User kann hinzgeügte Antworten löschen
- */

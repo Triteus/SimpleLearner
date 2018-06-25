@@ -45,27 +45,35 @@ public class AdminSession extends EditSession {
     }
 
 
-    public void createTeacher(User user) {
+    public void createTeacher(User user) throws SQLException {
+          sql.createTeacher(user);
+    }
+
+    public void createStudent(User user) throws SQLException {
+        sql.createStudent(user);
+    }
+
+    public void deleteTeacher(String username) throws SQLException {
+        sql.deleteTeacher(username);
+    }
+
+    public void deleteStudent(String username) throws SQLException {
+        sql.deleteStudent(username);
+    }
+
+    public void changeStudent(User user) throws SQLException {
+        sql.changeStudent(user);
+    }
+
+    public void changeTeacher(User user) throws SQLException {
+        sql.changeTeacher(user);
+    }
+
+    public void deleteCategory() throws SQLException {
 
     }
 
-    public void createStudent(User user) {
-
-    }
-
-    public void deleteTeacher(String username) {
-
-    }
-
-    public void deleteStudent(String username) {
-
-    }
-
-    public void changeStudent(User user) {
-
-    }
-
-    public void changeTeacher(User user) {
+    public void deleteSubject() throws SQLException {
 
     }
 
